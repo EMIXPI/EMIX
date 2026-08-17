@@ -824,6 +824,16 @@ a{color:inherit;text-decoration:none}
 .modal-v2-hint{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.18);border-radius:11px;padding:9px 12px;font-size:10px;color:var(--t2);display:flex;gap:7px;align-items:flex-start;line-height:1.6;margin-top:2px}
 .modal-v2-hint i{font-size:14px;color:var(--accent);margin-top:1px;flex-shrink:0}
 .modal-v2-footer{display:flex;gap:8px;margin-top:15px}
+.sdev-grid{display:flex;flex-direction:column;gap:10px;margin-top:4px}
+.sdev-card{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;background:var(--card-in);border:1px solid var(--border);text-decoration:none;transition:all .2s cubic-bezier(.4,0,.2,1)}
+.sdev-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 20px -8px rgba(0,0,0,.35)}
+.sdev-card-p{border-color:rgba(245,158,11,.35);background:rgba(245,158,11,.06)}
+.sdev-card-p:hover{border-color:#F59E0B}
+.sdev-ic{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 12px -2px rgba(0,0,0,.35)}
+.sdev-txt{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
+.sdev-t{font-size:13.5px;font-weight:600;color:var(--text)}
+.sdev-s{font-size:11px;color:var(--mid)}
+.sdev-go{font-size:15px;color:var(--dim);flex-shrink:0}
 .modal-v2-btn-cancel{flex:.75;justify-content:center;padding:10px;border-radius:11px;background:transparent;border:1px solid var(--card-b);color:var(--t2);font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;transition:.15s;display:flex;align-items:center}
 .modal-v2-btn-cancel:hover{background:var(--accent-d);color:var(--t1)}
 .modal-v2-btn-submit{flex:1;justify-content:center;padding:10px;border-radius:11px;background:linear-gradient(135deg,var(--purple),#6D48D6);color:#fff;border:none;font-family:inherit;font-size:12px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:6px;box-shadow:0 6px 18px rgba(139,92,246,.4);transition:.18s}
@@ -1714,6 +1724,52 @@ a{color:inherit;text-decoration:none}
       <div class="modal-v2-footer">
         <button class="btn btn-o" onclick="dismissUpdate()" style="flex:.6">انصراف</button>
         <button class="btn btn-p" onclick="startUpdateFromModal()" style="flex:1;justify-content:center"><i class="ti ti-download"></i> نصب بروزرسانی</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-bg" id="modal-support-dev" style="z-index:9999">
+  <div class="modal-v2" style="max-width:440px">
+    <div class="modal-v2-head" style="background:linear-gradient(155deg,rgba(236,72,153,.16) 0%,transparent 65%)">
+      <div class="modal-v2-icon" style="background:linear-gradient(135deg,#EC4899,#F472B6)"><i class="ti ti-heart"></i></div>
+      <div class="modal-v2-title">حمایت از سازنده</div>
+      <div class="modal-v2-sub">اگه این پروژه به دردت خورد، یه حمایت کوچیک انگیزه‌مون رو چند برابر می‌کنه</div>
+    </div>
+    <div class="modal-v2-body">
+      <div class="sdev-grid">
+        <a href="https://github.com/arvin341az-glitch/RVG" target="_blank" rel="noopener" class="sdev-card">
+          <span class="sdev-ic" style="background:linear-gradient(135deg,#24292F,#444D56)">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="#fff"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.09 3.29 9.4 7.86 10.93.57.1.78-.25.78-.55 0-.27-.01-1.17-.02-2.12-3.2.7-3.88-1.36-3.88-1.36-.52-1.34-1.28-1.7-1.28-1.7-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.08-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11.02 11.02 0 0 1 5.79 0c2.2-1.49 3.17-1.18 3.17-1.18.64 1.59.24 2.76.12 3.05.74.8 1.19 1.82 1.19 3.08 0 4.41-2.7 5.38-5.27 5.67.42.36.78 1.07.78 2.15 0 1.56-.01 2.81-.01 3.19 0 .3.21.66.79.55A10.52 10.52 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/></svg>
+          </span>
+          <span class="sdev-txt">
+            <span class="sdev-t">استار در گیت‌هاب</span>
+            <span class="sdev-s">حمایت رایگان با یه ستاره ⭐</span>
+          </span>
+          <i class="ti ti-external-link sdev-go"></i>
+        </a>
+        <a href="https://t.me/CodeBoxo" target="_blank" rel="noopener" class="sdev-card">
+          <span class="sdev-ic" style="background:linear-gradient(135deg,#2AABEE,#229ED9)">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="#fff"><path d="M23.05 3.6 19.6 20.4c-.26 1.15-.94 1.43-1.9.9l-5.26-3.88-2.54 2.44c-.28.28-.52.52-1.06.52l.38-5.4L19.1 6.2c.42-.38-.1-.6-.65-.22L6.6 13.4 1.4 11.76c-1.14-.36-1.16-1.14.24-1.68L21.6 2.36c.94-.34 1.77.22 1.45 1.24Z"/></svg>
+          </span>
+          <span class="sdev-txt">
+            <span class="sdev-t">عضویت در تلگرام</span>
+            <span class="sdev-s">آپدیت‌ها و اخبار پروژه</span>
+          </span>
+          <i class="ti ti-external-link sdev-go"></i>
+        </a>
+        <a href="https://railwayx3ui.page.gd/wallet/donate.html" target="_blank" rel="noopener" class="sdev-card sdev-card-p">
+          <span class="sdev-ic" style="background:linear-gradient(135deg,#F59E0B,#FBBF24)">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="#fff"><circle cx="12" cy="12" r="9.5"/><text x="12" y="16.5" font-size="11" font-weight="700" fill="#78350F" text-anchor="middle" font-family="sans-serif">$</text></svg>
+          </span>
+          <span class="sdev-txt">
+            <span class="sdev-t">دونیت کردن</span>
+            <span class="sdev-s">حمایت مالی از توسعه‌ی پروژه</span>
+          </span>
+          <i class="ti ti-external-link sdev-go"></i>
+        </a>
+      </div>
+      <div class="modal-v2-footer">
+        <button class="btn btn-o" id="support-dev-dismiss-btn" onclick="handleSupportDevDismiss()" style="flex:1;justify-content:center">ولم کن حوصله این کار‌ها رو ندارم</button>
       </div>
     </div>
   </div>
@@ -3019,6 +3075,17 @@ function navTo(name){
 document.querySelectorAll('.nav-it').forEach(el=>el.addEventListener('click',()=>navTo(el.dataset.pg)));
 function openModal(id){document.getElementById(id).classList.add('open')}
 function closeModal(id){document.getElementById(id).classList.remove('open')}
+let supportDevDismissCount=0;
+const supportDevDismissTexts=['د اخه مگه دست خودته:(','نکن مشتی نداریمااااا'];
+function handleSupportDevDismiss(){
+  supportDevDismissCount++;
+  if(supportDevDismissCount>=3){
+    closeModal('modal-support-dev');
+    localStorage.setItem('rvg-support-dev-seen','true');
+    return;
+  }
+  document.getElementById('support-dev-dismiss-btn').textContent=supportDevDismissTexts[supportDevDismissCount-1];
+}
 let prevTraf=0,ch1,ch2,ch3;
 async function fetchStats(){
   try{
@@ -4244,6 +4311,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   } catch(e) {
     console.error('modal error:', e);
+  }
+
+  try {
+    if (localStorage.getItem('rvg-support-dev-seen') !== 'true') {
+      openModal('modal-support-dev');
+    }
+  } catch(e) {
+    console.error('support modal error:', e);
   }
 
   fetchStats();
