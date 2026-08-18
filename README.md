@@ -294,8 +294,8 @@ If this project helped you, consider supporting its development:
 
 <div align="center">
 
-[![Donate](https://img.shields.io/badge/Donate-PayPal-blue.svg?style=for-the-badge&logo=paypal)](https://your-donate-link.com)
-[![Wallets](https://img.shields.io/badge/Crypto-Wallets-f7931a?style=for-the-badge&logo=bitcoin)](https://wallets.arvin341az.workers.dev)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-blue.svg?style=for-the-badge&logo=paypal)]([https://your-donate-link.com](https://railwayx3ui.page.gd/wallet/donate.html))
+[![Wallets](https://img.shields.io/badge/Crypto-Wallets-f7931a?style=for-the-badge&logo=bitcoin)]([https://wallets.arvin341az.workers.dev](https://railwayx3ui.page.gd/wallet/donate.html))
 
 **Made with ❤️ by [codebox](https://github.com/arvin341az-glitch)**
 
@@ -559,8 +559,8 @@ python main.py
 
 <div align="center">
 
-[![Donate](https://img.shields.io/badge/Donate-PayPal-blue.svg?style=for-the-badge&logo=paypal)](https://your-donate-link.com)
-[![Wallets](https://img.shields.io/badge/Crypto-Wallets-f7931a?style=for-the-badge&logo=bitcoin)](https://wallets.arvin341az.workers.dev)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-blue.svg?style=for-the-badge&logo=paypal)]([https://your-donate-link.com](https://railwayx3ui.page.gd/wallet/donate.html))
+[![Wallets](https://img.shields.io/badge/Crypto-Wallets-f7931a?style=for-the-badge&logo=bitcoin)]([https://wallets.arvin341az.workers.dev](https://railwayx3ui.page.gd/wallet/donate.html))
 
 **ساخته‌شده با ❤️ توسط [codebox](https://github.com/arvin341az-glitch)**
 
