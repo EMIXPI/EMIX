@@ -1591,6 +1591,14 @@ body::after{
 .conn-hero-title,.srv-hero-title,.node-hero-title{color:#FFF}
 .srv-hero-domain{color:#FFB199}
 .info-item-val{color:#FFD1C2}
+
+/* Responsive hardening: no horizontal bleed, correct mobile drawer */
+html,body{max-width:100%;overflow-x:hidden}
+@media(max-width:1050px){
+  .sidebar{transform:translateX(calc(100% + 60px)) !important}
+  .sidebar.open{transform:translateX(0) !important;box-shadow:-10px 0 44px rgba(0,0,0,.5),0 0 46px -20px rgba(255,61,46,.4)}
+  .topbar .tb-title{font-size:16px}
+}
 .log-timeline i{color:#FF6A45}
 
 </style>
@@ -2689,7 +2697,7 @@ body::after{
 </section>
 <section class="pg" id="pg-links">
   <div class="topbar">
-    <div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:16px">
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:16px;flex-wrap:wrap">
       <button class="btn btn-p" onclick="openModal('modal-create-link')">
         <i class="ti ti-square-rounded-plus"></i> ساخت کانفیگ جدید
       </button>
