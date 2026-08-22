@@ -28,7 +28,7 @@ from typing import Awaitable, Callable, Optional
 
 import httpx
 
-logger = logging.getLogger("RVG-Gateway")
+logger = logging.getLogger("EMIX")
 
 TELEMT_DIR = Path(os.environ.get("DATA_DIR", "/data")) / "telemt"
 TELEMT_BIN = TELEMT_DIR / "telemt"

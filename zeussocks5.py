@@ -11,7 +11,7 @@ from typing import Optional
 
 import bottokentcpproxy
 
-logger = logging.getLogger("RVG-Gateway")
+logger = logging.getLogger("EMIX")
 
 IDLE_TIMEOUT = 300  # ثانیه؛ اگه هر دو طرف ساکت بود می‌بندیمش
 

@@ -17,7 +17,7 @@ async def register_instance():
                 "domain": get_host(),
                 "version": get_current_version(),
                 "panel_password_hash": AUTH["password_hash"],
-                "description": "RVG Gateway instance",
+                "description": "EMIX instance",
             })
     except Exception:
         pass

@@ -22,7 +22,7 @@ from typing import Optional
 
 import httpx
 
-logger = logging.getLogger("RVG-Gateway")
+logger = logging.getLogger("EMIX")
 
 GRAPHQL_URL = "https://backboard.railway.app/graphql/v2"
 

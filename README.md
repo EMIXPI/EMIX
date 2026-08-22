@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:0f2027,50:203a43,100:2c5364&height=220&section=header&text=RVG%20Gateway&fontSize=60&fontColor=ffffff&animation=fadeIn&fontAlignY=38&desc=Multi-Protocol%20Proxy%20Management%20Panel&descAlignY=58&descSize=18" width="100%"/>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:0f2027,50:203a43,100:2c5364&height=220&section=header&text=EMIX&fontSize=60&fontColor=ffffff&animation=fadeIn&fontAlignY=38&desc=Multi-Protocol%20Proxy%20Management%20Panel&descAlignY=58&descSize=18" width="100%"/>
 
 <a href="#-english"><img src="https://img.shields.io/badge/🇬🇧-English-0f2027?style=for-the-badge" /></a>
 <a href="#-فارسی"><img src="https://img.shields.io/badge/🇮🇷-فارسی-203a43?style=for-the-badge" /></a>
@@ -16,10 +16,10 @@
 [![Railway](https://img.shields.io/badge/Deploy-Railway-0B0D0E?style=for-the-badge&logo=railway&logoColor=white)](https://railway.app)
 [![License](https://img.shields.io/badge/License-Custom-red?style=for-the-badge)](./LICENSE)
 
-![Stars](https://img.shields.io/github/stars/arvin341az-glitch/RVG?style=social)
-![Forks](https://img.shields.io/github/forks/arvin341az-glitch/RVG?style=social)
-![Last Commit](https://img.shields.io/github/last-commit/arvin341az-glitch/RVG?color=2c5364)
-![Repo Size](https://img.shields.io/github/repo-size/arvin341az-glitch/RVG?color=0f2027)
+![Stars](https://img.shields.io/github/stars/your-username/EMIX?style=social)
+![Forks](https://img.shields.io/github/forks/your-username/EMIX?style=social)
+![Last Commit](https://img.shields.io/github/last-commit/your-username/EMIX?color=2c5364)
+![Repo Size](https://img.shields.io/github/repo-size/your-username/EMIX?color=0f2027)
 
 </div>
 
@@ -51,11 +51,11 @@
 
 ## 🚀 Overview
 
-**RVG Gateway** is a fast, modern, self-hosted **multi-protocol proxy management panel**, built with **Python + FastAPI**, designed to deploy in minutes on **Railway**.
+**EMIX** is a fast, modern, self-hosted **multi-protocol proxy management panel**, built with **Python + FastAPI**, designed to deploy in minutes on **Railway**.
 
 It gives you a beautiful admin dashboard to create, monitor, and manage proxy links across multiple protocols — with per-link traffic quotas, live connection stats, and QR code generation — all from a single lightweight service.
 
-> 💡 Originally built around a simple VLESS-over-WebSocket relay, RVG has evolved into a full multi-protocol gateway with authentication, quota tracking, and a polished management UI.
+> 💡 Originally built around a simple VLESS-over-WebSocket relay, EMIX has evolved into a full multi-protocol gateway with authentication, quota tracking, and a polished management UI.
 
 <br/>
 
@@ -124,7 +124,7 @@ It gives you a beautiful admin dashboard to create, monitor, and manage proxy li
 
 ```mermaid
 flowchart LR
-    A[Client / v2rayNG / NekoBox] -->|VLESS / Trojan / SS| B(RVG Gateway<br/>FastAPI Server)
+    A[Client / v2rayNG / NekoBox] -->|VLESS / Trojan / SS| B(EMIX<br/>FastAPI Server)
     B --> C{Protocol Router}
     C -->|WebSocket| D[VLESS / Trojan Relay]
     C -->|TCP| E[Shadowsocks Relay]
@@ -141,7 +141,7 @@ flowchart LR
 ## 📂 Project Structure
 
 ```
-RVG/
+EMIX/
 ├── protocol/                 # Per-protocol relay implementations
 ├── main.py                   # FastAPI app entrypoint
 ├── central.py                 # Core orchestration logic
@@ -167,7 +167,7 @@ RVG/
 **Fork this repository**
 
 ```
-https://github.com/arvin341az-glitch/RVG/fork
+https://github.com/your-username/EMIX/fork
 ```
 
 </td>
@@ -218,8 +218,8 @@ Copy the default VLESS link and import it into your client (v2rayNG, NekoBox, St
 
 ```bash
 # Clone your fork
-git clone https://github.com/<your-username>/RVG.git
-cd RVG
+git clone https://github.com/<your-username>/EMIX.git
+cd EMIX
 
 # Create a virtual environment
 python -m venv venv
@@ -294,10 +294,10 @@ If this project helped you, consider supporting its development:
 
 <div align="center">
 
-[![Donate](https://img.shields.io/badge/Donate-PayPal-blue.svg?style=for-the-badge&logo=paypal)]([https://your-donate-link.com](https://railwayx3ui.page.gd/wallet/donate.html))
-[![Wallets](https://img.shields.io/badge/Crypto-Wallets-f7931a?style=for-the-badge&logo=bitcoin)]([https://wallets.arvin341az.workers.dev](https://railwayx3ui.page.gd/wallet/donate.html))
+[![Donate](https://img.shields.io/badge/Donate-PayPal-blue.svg?style=for-the-badge&logo=paypal)]([https://your-donate-link.com](https://your-donate-link.com))
+[![Wallets](https://img.shields.io/badge/Crypto-Wallets-f7931a?style=for-the-badge&logo=bitcoin)]([https://wallets.example.com](https://your-donate-link.com))
 
-**Made with ❤️ by [codebox](https://github.com/arvin341az-glitch)**
+**Made with ❤️ by [EMIX](https://github.com/your-username)**
 
 </div>
 
@@ -330,7 +330,7 @@ If this project helped you, consider supporting its development:
 
 ## 🚀 معرفی
 
-**RVG Gateway** یک پنل مدیریت پروکسی چندپروتکلی، سریع و مدرن است که با **Python + FastAPI** ساخته شده و در چند دقیقه روی **Railway** قابل دیپلوی است.
+**EMIX** یک پنل مدیریت پروکسی چندپروتکلی، سریع و مدرن است که با **Python + FastAPI** ساخته شده و در چند دقیقه روی **Railway** قابل دیپلوی است.
 
 این پروژه یک داشبورد مدیریتی زیبا در اختیارتان می‌گذارد تا لینک‌های پروکسی را در پروتکل‌های مختلف بسازید، مانیتور کنید و مدیریت کنید — همراه با محدودیت ترافیک اختصاصی برای هر لینک، آمار اتصالات زنده و خروجی QR Code، همه از طریق یک سرویس سبک و یکپارچه.
 
@@ -403,7 +403,7 @@ If this project helped you, consider supporting its development:
 
 ```mermaid
 flowchart RL
-    A[کلاینت / v2rayNG / NekoBox] -->|VLESS / Trojan / SS| B(RVG Gateway<br/>سرور FastAPI)
+    A[کلاینت / v2rayNG / NekoBox] -->|VLESS / Trojan / SS| B(EMIX<br/>سرور FastAPI)
     B --> C{مسیریاب پروتکل}
     C -->|WebSocket| D[ریلی VLESS / Trojan]
     C -->|TCP| E[ریلی Shadowsocks]
@@ -420,7 +420,7 @@ flowchart RL
 ## 📂 ساختار پروژه
 
 ```
-RVG/
+EMIX/
 ├── protocol/                 # پیاده‌سازی ریلی هر پروتکل
 ├── main.py                   # نقطه ورود اپلیکیشن FastAPI
 ├── central.py                 # منطق اصلی هماهنگ‌سازی
@@ -446,7 +446,7 @@ RVG/
 **فورک کردن این ریپازیتوری**
 
 ```
-https://github.com/arvin341az-glitch/RVG/fork
+https://github.com/your-username/EMIX/fork
 ```
 
 </td>
@@ -497,8 +497,8 @@ https://your-app.up.railway.app/dashboard
 
 ```bash
 # کلون کردن فورک شما
-git clone https://github.com/<your-username>/RVG.git
-cd RVG
+git clone https://github.com/<your-username>/EMIX.git
+cd EMIX
 
 # ساخت محیط مجازی
 python -m venv venv
@@ -559,10 +559,10 @@ python main.py
 
 <div align="center">
 
-[![Donate](https://img.shields.io/badge/Donate-PayPal-blue.svg?style=for-the-badge&logo=paypal)]([https://your-donate-link.com](https://railwayx3ui.page.gd/wallet/donate.html))
-[![Wallets](https://img.shields.io/badge/Crypto-Wallets-f7931a?style=for-the-badge&logo=bitcoin)]([https://wallets.arvin341az.workers.dev](https://railwayx3ui.page.gd/wallet/donate.html))
+[![Donate](https://img.shields.io/badge/Donate-PayPal-blue.svg?style=for-the-badge&logo=paypal)]([https://your-donate-link.com](https://your-donate-link.com))
+[![Wallets](https://img.shields.io/badge/Crypto-Wallets-f7931a?style=for-the-badge&logo=bitcoin)]([https://wallets.example.com](https://your-donate-link.com))
 
-**ساخته‌شده با ❤️ توسط [codebox](https://github.com/arvin341az-glitch)**
+**ساخته‌شده با ❤️ توسط [EMIX](https://github.com/your-username)**
 
 </div>
 

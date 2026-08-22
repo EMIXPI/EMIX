@@ -15,7 +15,7 @@ import httpx
 
 import bottokentcpproxy as btp  # از توابع مشترک توکن/اتصال Railway استفاده می‌کنیم
 
-logger = logging.getLogger("RVG-Gateway")
+logger = logging.getLogger("EMIX")
 
 MAX_ATTEMPTS = int(os.environ.get("BOT_DOMAIN_GEN_MAX_ATTEMPTS", 400))
 CONCURRENCY = int(os.environ.get("BOT_DOMAIN_GEN_CONCURRENCY", 8))

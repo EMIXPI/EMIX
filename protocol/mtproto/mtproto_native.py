@@ -9,7 +9,7 @@
 # معماری: درست مثل نسخه‌ی قدیمی mtg شما — یک پروسه به‌ازای هر لینک/کاربر
 # (per-instance / per-port). این باینری رسمی per-process فقط یک ad-tag
 # (-P) قبول می‌کنه، ولی چون هرکاربر پروسه‌ی خودش رو داره، این یعنی هرکاربر
-# همچنان ad_tag مستقل خودش رو داره — دقیقاً چیزی که RVG نیاز داره.
+# همچنان ad_tag مستقل خودش رو داره — دقیقاً چیزی که EMIX نیاز داره.
 # ══════════════════════════════════════════════════════════════════════════════
 import asyncio
 import ipaddress
@@ -29,7 +29,7 @@ from typing import Awaitable, Callable, Optional
 
 import httpx
 
-logger = logging.getLogger("RVG-Gateway")
+logger = logging.getLogger("EMIX")
 
 DATA_DIR = Path(os.environ.get("DATA_DIR", "/data"))
 MTP_DIR = DATA_DIR / "mtproxy"

@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-The following versions of Rvg are currently receiving security updates:
+The following versions of EMIX are currently receiving security updates:
 
 | Version | Supported          |
 | ------- | ------------------ |
@@ -13,11 +13,11 @@ The following versions of Rvg are currently receiving security updates:
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability in Rvg, please **do not** open a public GitHub issue.
+If you discover a security vulnerability in EMIX, please **do not** open a public GitHub issue.
 
 Instead, report it privately through the following channel:
 
-- **Telegram:** [@codebox](https://t.me/CodeBoxo?direct)  <!-- replace with your real Telegram username or channel link -->
+- **Telegram:** [@EMIX](https://t.me/EMIX)  <!-- replace with your real Telegram username or channel link -->
 
 Please contact us directly and privately via Telegram rather than posting details publicly.
 
@@ -25,7 +25,7 @@ Please include as much of the following information as possible:
 
 - A description of the vulnerability and its potential impact
 - Steps to reproduce the issue (proof-of-concept code, if available)
-- The version/commit of Rvg affected
+- The version/commit of EMIX affected
 - Any suggested fix or mitigation, if you have one
 
 ## Response Process
@@ -37,7 +37,7 @@ Please include as much of the following information as possible:
 
 ## Scope
 
-This policy covers the Rvg source code in this repository. Issues in third-party dependencies should be reported to their respective maintainers, though we appreciate being notified as well.
+This policy covers the EMIX source code in this repository. Issues in third-party dependencies should be reported to their respective maintainers, though we appreciate being notified as well.
 
 ## Recognition
 
@@ -45,4 +45,4 @@ We're happy to credit security researchers who responsibly report valid vulnerab
 
 ---
 
-Thank you for helping keep Rvg and its users safe.
+Thank you for helping keep EMIX and its users safe.
