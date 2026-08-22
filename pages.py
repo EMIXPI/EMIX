@@ -221,7 +221,7 @@ input:focus~.ic-lock{color:var(--accent2);animation:wiggle .4s ease}
 <div class="wrap" id="wrap">
   <div class="card" id="card">
     <div class="brand">
-      <div class="brand-img"><svg viewBox="0 0 46 46" width="100%" height="100%" role="img" aria-label="EMIX"><defs><linearGradient id="lg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF4D2E"/><stop offset="1" stop-color="#E8590C"/></linearGradient></defs><rect width="46" height="46" rx="13" fill="url(#lg1)"/><text x="23" y="31" text-anchor="middle" font-family="Vazirmatn,Arial,sans-serif" font-size="23" font-weight="800" fill="#ffffff">E</text></svg></div>
+      <div class="brand-img"><svg viewBox="0 0 100 100" width="100%" height="100%" role="img" aria-label="EMIX logo"><rect width="100" height="100" fill="#030303"/><circle cx="50" cy="48" r="45" fill="#0B0B0B" stroke="#5A160E" stroke-width="2"/><circle cx="50" cy="48" r="42" fill="none" stroke="#FF3B24" stroke-width="1" opacity=".7"/><path d="M72 24H39C29 24 23 30 23 40V61C23 71 29 77 39 77H73M39 50H64C72 50 76 46 80 39" fill="none" stroke="#7A170F" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" opacity=".6"/><path d="M72 24H39C29 24 23 30 23 40V61C23 71 29 77 39 77H73M39 50H64C72 50 76 46 80 39" fill="none" stroke="#FF4028" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><text x="50" y="91" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" font-weight="800" letter-spacing="3" fill="#FF3B24">EMIX</text></svg></div>
       <div><div class="brand-name">EMIX</div><div class="brand-sub">Gateway <span class="mono">· v9.2</span></div></div>
     </div>
     <h1>ورود به پنل</h1>
@@ -247,7 +247,7 @@ input:focus~.ic-lock{color:var(--accent2);animation:wiggle .4s ease}
       <button class="btn" type="submit" id="btn"><i class="ti ti-login-2"></i> ورود به داشبورد</button>
     </form>
 
-    <div class="footer">کانال رسمی<a href="https://t.me/EMIX" target="_blank" rel="noopener"><i class="ti ti-brand-telegram"></i>@EMIX</a></div>
+    <div class="footer">کانال رسمی<a href="https://t.me/emixpi" target="_blank" rel="noopener"><i class="ti ti-brand-telegram"></i>@emixpi</a></div>
   </div>
 </div>
 
@@ -1884,7 +1884,7 @@ html,body{max-width:100%;overflow-x:hidden}
     </div>
     <div class="modal-v2-body">
       <div class="sdev-grid">
-        <a href="https://github.com/your-username/EMIX" target="_blank" rel="noopener" class="sdev-card">
+        <a href="https://github.com/EMIXPI/EMIX" target="_blank" rel="noopener" class="sdev-card">
           <span class="sdev-ic" style="background:linear-gradient(135deg,#24292F,#444D56)">
             <svg viewBox="0 0 24 24" width="20" height="20" fill="#fff"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.09 3.29 9.4 7.86 10.93.57.1.78-.25.78-.55 0-.27-.01-1.17-.02-2.12-3.2.7-3.88-1.36-3.88-1.36-.52-1.34-1.28-1.7-1.28-1.7-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.08-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11.02 11.02 0 0 1 5.79 0c2.2-1.49 3.17-1.18 3.17-1.18.64 1.59.24 2.76.12 3.05.74.8 1.19 1.82 1.19 3.08 0 4.41-2.7 5.38-5.27 5.67.42.36.78 1.07.78 2.15 0 1.56-.01 2.81-.01 3.19 0 .3.21.66.79.55A10.52 10.52 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/></svg>
           </span>
@@ -1894,23 +1894,13 @@ html,body{max-width:100%;overflow-x:hidden}
           </span>
           <i class="ti ti-external-link sdev-go"></i>
         </a>
-        <a href="https://t.me/EMIX" target="_blank" rel="noopener" class="sdev-card">
+        <a href="https://t.me/emixpi" target="_blank" rel="noopener" class="sdev-card">
           <span class="sdev-ic" style="background:linear-gradient(135deg,#2AABEE,#229ED9)">
             <svg viewBox="0 0 24 24" width="20" height="20" fill="#fff"><path d="M23.05 3.6 19.6 20.4c-.26 1.15-.94 1.43-1.9.9l-5.26-3.88-2.54 2.44c-.28.28-.52.52-1.06.52l.38-5.4L19.1 6.2c.42-.38-.1-.6-.65-.22L6.6 13.4 1.4 11.76c-1.14-.36-1.16-1.14.24-1.68L21.6 2.36c.94-.34 1.77.22 1.45 1.24Z"/></svg>
           </span>
           <span class="sdev-txt">
             <span class="sdev-t">عضویت در تلگرام</span>
             <span class="sdev-s">آپدیت‌ها و اخبار پروژه</span>
-          </span>
-          <i class="ti ti-external-link sdev-go"></i>
-        </a>
-        <a href="https://railwayx3ui.page.gd/wallet/donate.html" target="_blank" rel="noopener" class="sdev-card sdev-card-p">
-          <span class="sdev-ic" style="background:linear-gradient(135deg,#F59E0B,#FBBF24)">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="#fff"><circle cx="12" cy="12" r="9.5"/><text x="12" y="16.5" font-size="11" font-weight="700" fill="#78350F" text-anchor="middle" font-family="sans-serif">$</text></svg>
-          </span>
-          <span class="sdev-txt">
-            <span class="sdev-t">دونیت کردن</span>
-            <span class="sdev-s">حمایت مالی از توسعه‌ی پروژه</span>
           </span>
           <i class="ti ti-external-link sdev-go"></i>
         </a>
@@ -2599,7 +2589,7 @@ html,body{max-width:100%;overflow-x:hidden}
 </div>
 <div class="mob-top">
   <div class="ml">
-    <div class="mob-logo"><svg viewBox="0 0 46 46" width="100%" height="100%" role="img" aria-label="EMIX"><defs><linearGradient id="emgl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF4D2E"/><stop offset="1" stop-color="#E8590C"/></linearGradient></defs><rect width="46" height="46" rx="13" fill="url(#emgl)"/><text x="23" y="31" text-anchor="middle" font-family="Vazirmatn,Arial,sans-serif" font-size="23" font-weight="800" fill="#ffffff">E</text></svg></div>
+    <div class="mob-logo"><svg viewBox="0 0 100 100" width="100%" height="100%" role="img" aria-label="EMIX logo"><rect width="100" height="100" fill="#030303"/><circle cx="50" cy="48" r="45" fill="#0B0B0B" stroke="#5A160E" stroke-width="2"/><circle cx="50" cy="48" r="42" fill="none" stroke="#FF3B24" stroke-width="1" opacity=".7"/><path d="M72 24H39C29 24 23 30 23 40V61C23 71 29 77 39 77H73M39 50H64C72 50 76 46 80 39" fill="none" stroke="#7A170F" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" opacity=".6"/><path d="M72 24H39C29 24 23 30 23 40V61C23 71 29 77 39 77H73M39 50H64C72 50 76 46 80 39" fill="none" stroke="#FF4028" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><text x="50" y="91" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" font-weight="800" letter-spacing="3" fill="#FF3B24">EMIX</text></svg></div>
     <span class="mob-title">EMIX</span>
   </div>
   <div class="mob-right">
@@ -2611,7 +2601,7 @@ html,body{max-width:100%;overflow-x:hidden}
 <aside class="sidebar" id="sb">
   <button class="sb-close" id="close-sb"><i class="ti ti-x"></i></button>
   <div class="logo">
-    <div class="logo-img"><svg viewBox="0 0 46 46" width="100%" height="100%" role="img" aria-label="EMIX"><defs><linearGradient id="emgl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF4D2E"/><stop offset="1" stop-color="#E8590C"/></linearGradient></defs><rect width="46" height="46" rx="13" fill="url(#emgl)"/><text x="23" y="31" text-anchor="middle" font-family="Vazirmatn,Arial,sans-serif" font-size="23" font-weight="800" fill="#ffffff">E</text></svg></div>
+    <div class="logo-img"><svg viewBox="0 0 100 100" width="100%" height="100%" role="img" aria-label="EMIX logo"><rect width="100" height="100" fill="#030303"/><circle cx="50" cy="48" r="45" fill="#0B0B0B" stroke="#5A160E" stroke-width="2"/><circle cx="50" cy="48" r="42" fill="none" stroke="#FF3B24" stroke-width="1" opacity=".7"/><path d="M72 24H39C29 24 23 30 23 40V61C23 71 29 77 39 77H73M39 50H64C72 50 76 46 80 39" fill="none" stroke="#7A170F" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" opacity=".6"/><path d="M72 24H39C29 24 23 30 23 40V61C23 71 29 77 39 77H73M39 50H64C72 50 76 46 80 39" fill="none" stroke="#FF4028" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><text x="50" y="91" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" font-weight="800" letter-spacing="3" fill="#FF3B24">EMIX</text></svg></div>
     <div><div class="logo-name">EMIX</div><div class="logo-sub">Gateway · v9.2</div></div>
   </div>
   <div class="nav-wrap">
@@ -2633,7 +2623,7 @@ html,body{max-width:100%;overflow-x:hidden}
   </div>
   <div class="sb-foot">
     <button class="theme-btn" onclick="toggleTheme()"><i class="ti ti-moon" id="theme-icon"></i> <span id="theme-label">تم روشن</span></button>
-    <a class="tg-btn" href="https://t.me/EMIX" target="_blank" rel="noopener"><i class="ti ti-brand-telegram"></i> @EMIX</a>
+    <a class="tg-btn" href="https://t.me/emixpi" target="_blank" rel="noopener"><i class="ti ti-brand-telegram"></i> @emixpi</a>
     <button class="logout-btn" id="logout-btn"><i class="ti ti-logout"></i> خروج</button>
   </div>
 </aside>
@@ -2692,7 +2682,7 @@ html,body{max-width:100%;overflow-x:hidden}
   </div>
   <div class="dash-footer">
     <span class="df-text">EMIX v9.2 · Railway · 2025</span>
-    <a class="df-link" href="https://t.me/EMIX" target="_blank"><i class="ti ti-brand-telegram"></i> t.me/EMIX</a>
+    <a class="df-link" href="https://t.me/emixpi" target="_blank"><i class="ti ti-brand-telegram"></i> t.me/emixpi</a>
   </div>
 </section>
 <section class="pg" id="pg-links">
@@ -6029,18 +6019,18 @@ html,body{{min-height:100%;background:var(--bg);font-family:var(--serif);color:v
 <div class="wrap">
   <div class="top">
     <div class="brand">
-      <div class="brand-img"><svg viewBox="0 0 46 46" width="100%" height="100%" role="img" aria-label="EMIX"><defs><linearGradient id="emgl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF4D2E"/><stop offset="1" stop-color="#E8590C"/></linearGradient></defs><rect width="46" height="46" rx="13" fill="url(#emgl)"/><text x="23" y="31" text-anchor="middle" font-family="Vazirmatn,Arial,sans-serif" font-size="23" font-weight="800" fill="#ffffff">E</text></svg></div>
+      <div class="brand-img"><svg viewBox="0 0 100 100" width="100%" height="100%" role="img" aria-label="EMIX logo"><rect width="100" height="100" fill="#030303"/><circle cx="50" cy="48" r="45" fill="#0B0B0B" stroke="#5A160E" stroke-width="2"/><circle cx="50" cy="48" r="42" fill="none" stroke="#FF3B24" stroke-width="1" opacity=".7"/><path d="M72 24H39C29 24 23 30 23 40V61C23 71 29 77 39 77H73M39 50H64C72 50 76 46 80 39" fill="none" stroke="#7A170F" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" opacity=".6"/><path d="M72 24H39C29 24 23 30 23 40V61C23 71 29 77 39 77H73M39 50H64C72 50 76 46 80 39" fill="none" stroke="#FF4028" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><text x="50" y="91" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" font-weight="800" letter-spacing="3" fill="#FF3B24">EMIX</text></svg></div>
       <div><div class="brand-name">EMIX</div><div class="brand-sub">Gateway · v9.2</div></div>
     </div>
     <div class="top-actions">
       <button class="icon-btn" id="theme-toggle" onclick="toggleTheme()" title="تغییر تم"><i class="ti ti-sun" id="theme-icon"></i></button>
-      <a class="icon-btn" href="https://t.me/EMIX" target="_blank" title="کانال تلگرام"><i class="ti ti-brand-telegram"></i></a>
+      <a class="icon-btn" href="https://t.me/emixpi" target="_blank" title="کانال تلگرام"><i class="ti ti-brand-telegram"></i></a>
     </div>
   </div>
   <div id="root">
     <div class="empty-state"><i class="ti ti-loader-2" style="animation:spin 1s linear infinite"></i>در حال بارگذاری...</div>
   </div>
-  <div class="footer">کانال رسمی: <a href="https://t.me/EMIX" target="_blank">@EMIX</a> · EMIX v9.2</div>
+  <div class="footer">کانال رسمی: <a href="https://t.me/emixpi" target="_blank">@emixpi</a> · EMIX v9.2</div>
 </div>
 <script>
 const UUID_KEY='{uuid_key}';

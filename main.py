@@ -609,7 +609,7 @@ def fmt_bytes(b: int) -> str:
     if b < 1024**3: return f"{b/1024**2:.2f} MB"
     return f"{b/1024**3:.2f} GB"
 
-def build_sub_headers(label: str, used_bytes: int, limit_bytes: int, expires_at: str | None, support_url: str = "https://t.me/EMIX") -> dict:
+def build_sub_headers(label: str, used_bytes: int, limit_bytes: int, expires_at: str | None, support_url: str = "https://t.me/emixpi") -> dict:
     total = limit_bytes if limit_bytes > 0 else 0
     expire_ts = 0
     if expires_at:
@@ -769,7 +769,7 @@ async def ensure_default_link():
 # ── Basic endpoints ───────────────────────────────────────────────────────────
 @app.get("/")
 async def root():
-    return {"service": "EMIX", "version": "9.2", "status": "active", "channel": "https://t.me/EMIX"}
+    return {"service": "EMIX", "version": "9.2", "status": "active", "channel": "https://t.me/emixpi"}
 
 @app.get("/health")
 async def health():
