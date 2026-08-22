@@ -44,6 +44,13 @@ _manifest_cache: dict = {"data": None, "ts": 0.0}
 MANIFEST_CACHE_LOCK = asyncio.Lock()
 MANIFEST_CACHE_TTL = float(os.environ.get("MANIFEST_CACHE_TTL", "120"))  # ثانیه
 
+# ── قفل بروزرسانی خودکار (EMIX) ────────────────────────────────────────────────
+# نسخه‌ی فعلی پنل (EMIX با رابط کاربری بازطراحی‌شده) نباید توسط مانیفست Worker
+# بازنویسی شود؛ در غیر این صورت طراحی و برندینگ به نسخه‌ی اصلی برمی‌گردد.
+# پیش‌فرض: بروزرسانی کاملاً غیرفعال است. برای فعال‌کردن دوباره، متغیر محیطی
+# DISABLE_UPDATES را روی "0" تنظیم کنید.
+UPDATES_DISABLED = os.environ.get("DISABLE_UPDATES", "1") != "0"
+
 
 def _log(msg: str):
     update_log.append({"time": time.time(), "msg": msg})
@@ -189,6 +196,9 @@ async def get_latest_version_info() -> dict:
     خروجی این تابع فقط شامل version/description است (برای نمایش در پنل)؛
     لیست files برای دانلود واقعی در perform_update جداگانه گرفته می‌شود.
     """
+    if UPDATES_DISABLED:
+        # قفل EMIX: هیچ درخواستی به Worker زده نمی‌شود تا نسخه‌ی جدید پیشنهاد نشود.
+        return {}
     now = time.time()
     async with MANIFEST_CACHE_LOCK:
         cached = _manifest_cache["data"]
@@ -282,6 +292,10 @@ async def _download_one_file(client: httpx.AsyncClient, entry: dict) -> tuple[bo
 async def perform_update() -> bool:
     """مانیفست Worker رو می‌گیره، فایل‌های لیست‌شده رو دانلود و جایگزین می‌کنه،
     و در پایان version.txt محلی رو با نسخه‌ی جدید بروزرسانی می‌کنه."""
+    if UPDATES_DISABLED:
+        _log("⛔ بروزرسانی غیرفعال است — نسخه‌ی EMIX قفل شده تا طراحی سفارشی حفظ شود.")
+        update_state["running"] = False
+        return False
     update_state["running"] = True
     update_state["progress"] = 1
     _log(f"شروع بروزرسانی | MANIFEST={UPDATE_MANIFEST_URL or 'خالی!'} | APP_DIR={APP_DIR}")

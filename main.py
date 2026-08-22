@@ -2618,7 +2618,7 @@ from updater import (
     get_current_version, get_current_version_info,
     get_latest_version_info, perform_update,
     update_log, update_state, load_update_history,
-    REPO, BRANCH, is_newer_version,
+    REPO, BRANCH, is_newer_version, UPDATES_DISABLED,
 )
 
 @app.get("/api/version")
@@ -2645,6 +2645,8 @@ async def api_update_log(_=Depends(require_auth)):
 
 @app.post("/api/update")
 async def api_update(_=Depends(require_auth)):
+    if UPDATES_DISABLED:
+        raise HTTPException(status_code=403, detail="بروزرسانی در نسخه‌ی EMIX غیرفعال است تا طراحی سفارشی حفظ شود.")
     if update_state["running"]:
         raise HTTPException(status_code=409, detail="بروزرسانی در حال اجراست")
     update_log.append({"time": time.time(), "msg": "درخواست بروزرسانی ثبت شد، در صف اجرا..."})
