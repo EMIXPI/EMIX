@@ -2756,6 +2756,43 @@ async def dashboard(request: Request):
 async def test_ws_redirect():
     return HTMLResponse(content="<script>location.href='/dashboard'</script>")
 
+# ── تست پینگ کانفیگ ─────────────────────────────────────────────────────────
+@app.post("/api/links/{uid}/ping")
+async def api_ping_link(uid: str, _=Depends(require_auth)):
+    import socket as _s
+    async with LINKS_LOCK:
+        link = LINKS.get(uid)
+    if not link:
+        raise HTTPException(status_code=404, detail="کانفیگ یافت نشد")
+    host = get_host()
+    port = 443
+    if link.get("protocol") == "mtproto":
+        pub_port = link.get("mtproto_public_port")
+        if pub_port:
+            port = int(pub_port)
+        elif link.get("mtproto_port"):
+            port = int(link["mtproto_port"])
+    start = time.perf_counter()
+    ok = False
+    detail = ""
+    ms = None
+    try:
+        loop = asyncio.get_event_loop()
+        def _probe():
+            with _s.create_connection((host, port), timeout=4):
+                return round((time.perf_counter() - start) * 1000, 1)
+        ms = await loop.run_in_executor(None, _probe)
+        ok = True
+        detail = f"TCP {host}:{port}"
+    except Exception as e:
+        detail = f"{host}:{port} \u2014 {type(e).__name__}"
+    result = {"ok": ok, "ms": ms, "detail": detail, "checked_at": datetime.now().isoformat()}
+    async with LINKS_LOCK:
+        if uid in LINKS:
+            LINKS[uid]["last_ping"] = result
+    asyncio.create_task(save_state())
+    return result
+
 if __name__ == "__main__":
     uvicorn.run(
         app,
