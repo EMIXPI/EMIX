@@ -3302,18 +3302,6 @@ async function loadActivity(){
   }catch(e){console.error(e)}
 }
 let allSubsList=[],allLinksList=[],onlineNodesList=[];
-async function pingLink(uuid,btn){
-  const ic=btn.querySelector('i');
-  if(ic){ic.className='ti ti-loader-2';ic.style.animation='spin 1s linear infinite';}
-  try{
-    const r=await authF(`/api/links/${uuid}/ping`,{method:'POST'});
-    const d=await r.json();
-    if(d.ok)toast('پینگ موفق'+(d.ms!=null?` — ${d.ms}ms`:''),'ok');
-    else toast('پینگ ناموفق: '+d.detail,'err');
-    loadLinks();
-  }catch(e){toast('خطا در تست پینگ','err')}
-  finally{if(ic){ic.className='ti ti-activity';ic.style.animation='';}}
-}
 async function loadLinks(){
   try{
     const [lr,sr,nr,zr]=await Promise.all([authF('/api/links'),authF('/api/subs'),authF('/api/nodes/aggregate').catch(()=>null),authF('/api/zeus-proxy/status').catch(()=>null)]);
@@ -3392,7 +3380,6 @@ async function loadLinks(){
       <div class="cfg-divider-v"></div>
       <div class="cfg-badges-col">
         ${protoBadge(l.protocol)}
-        ${l.last_ping ? `<span class="cfg-sub-tag" style="color:${l.last_ping.ok?'var(--green)':'var(--red-t)'};cursor:pointer" onclick="pingLink('${l.uuid}',this)" title="تست پینگ — کلیک برای تازه‌سازی"><i class="ti ${l.last_ping.ok?'ti-wifi':'ti-wifi-off'}"></i> ${l.last_ping.ok?(l.last_ping.ms!=null?l.last_ping.ms+'ms':'زنده'):'قطع'}</span>` : ''
         ${isMt && l.ad_tag ? `<span class="cfg-sub-tag" style="background:linear-gradient(135deg,rgba(255,122,61,.18),rgba(232,89,12,.12));color:#FFB199;padding:3px 9px;border-radius:20px;border:1px solid rgba(255,122,61,.25);font-weight:700"><i class="ti ti-speakerphone" style="color:#FFB199"></i> تبلیغ فعال</span>` : ''}
         ${isMt && l.mtproto_public_host ? `<span class="cfg-sub-tag"><i class="ti ti-route"></i> ${esc(l.mtproto_public_host)}:${l.mtproto_public_port}</span>` : ''}
         ${isMt && !l.mtproto_public_host && l.mtproto_public_pending ? `<span class="cfg-sub-tag" style="color:var(--amber-t)"><i class="ti ti-loader-2" style="animation:spin 1s linear infinite"></i> در حال ساخت TCP Proxy عمومی...</span>` : ''}
@@ -3404,7 +3391,6 @@ async function loadLinks(){
         <div class="cfg-actions">
         <button class="tog${allowed?' on':''}" onclick="toggleActive('${l.uuid}',${!l.active}${isNode?`,'${l._nodeId}'`:''})" title="فعال/غیرفعال"></button>
         ${!isNode?adBtn:''}
-        ${!isNode?`<button class="btn btn-sm btn-g btn-icon" onclick="pingLink('${l.uuid}',this)" title="تست پینگ"><i class="ti ti-activity"></i></button>`:""}
         <button class="btn btn-sm btn-g btn-icon" onclick="navigator.clipboard.writeText('${esc(l.vless_link)}').then(()=>toast('لینک کپی شد','ok'))" title="کپی لینک"><i class="ti ti-copy"></i></button>
         ${isMt
           ? `<button class="btn btn-sm btn-g btn-icon" onclick="openMtInfoModal('${esc(l.label)}','${esc(l.mtproto_secret||'')}','${esc(l.vless_link)}',${!!l.mtproto_public_host})" title="اطلاعات پروکسی"><i class="ti ti-info-circle"></i></button>`
