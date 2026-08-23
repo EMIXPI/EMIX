@@ -545,13 +545,19 @@ def generate_share_link(uuid: str, host: str, remark: str = "EMIX", protocol: st
         password = link.get("ss_password", "")
         return generate_ss_link(host, 443, cipher, password, remark)
 
-    # ── Transport Adapter System ──────────────────────────────────────────
-    # ترنسپورت‌های جدید از طریق رجیستری مدیریت می‌شوند
-    transport = get_transport(protocol)
+    # ── Transport Adapter System (فقط پروتکل‌های جدید) ────────────────────
+    # مهم: پروتکل‌های اورجینال (WS/XHTTP) هرگز نباید از این مسیر عبور کنند —
+    # منطق اصلی آنها در پایین همین تابع حفظ شده تا لینک‌ها بایت‌به‌بایت مثل قبل
+    # تولید شوند و کلاینت‌های فعلی بدون هیچ تغییری به کار خود ادامه دهند.
+    NEW_TRANSPORT_KEYS = (
+        "vless-reality", "vless-reality-grpc", "vless-grpc",
+        "trojan-grpc", "hysteria2", "tuic",
+    )
+    transport = get_transport(protocol) if protocol in NEW_TRANSPORT_KEYS else None
     if transport:
         params = {
             "uuid": uuid, "host": host,
-            "fp": fp, "alpn": alpn,
+            "fp": fp, "fingerprint": fp, "alpn": alpn,
         }
         # REALITY-specific params
         if "reality" in protocol:

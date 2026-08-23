@@ -74,8 +74,8 @@ class TrojanXHTTPPacketUpTransport(XHTTPTransport):
     protocol_key = "trojan-xhttp-packet-up"
     label = "Trojan · XHTTP Packet-Up"
 
-    def share_params(self, uuid: str, host: str, params: Dict[str, Any]) -> Dict[str, str]:
-        mode = params.get("mode", "packet-up")
+    def share_params(self, uuid: str, host: str, params) -> Dict[str, str]:
+        mode = params.get("mode", self._mode)
         path = params.get("path", f"/txhttp-siz10/{mode}/{uuid}")
         return {
             "security": "tls",
@@ -94,6 +94,7 @@ class TrojanXHTTPPacketUpTransport(XHTTPTransport):
 
 
 class TrojanXHTTPStreamUpTransport(TrojanXHTTPPacketUpTransport):
+    _mode = "stream-up"
     protocol_key = "trojan-xhttp-stream-up"
     label = "Trojan · XHTTP Stream-Up"
 
