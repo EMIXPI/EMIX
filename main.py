@@ -48,6 +48,15 @@ import botgeneratedomin
 import bottokentcpproxy
 import zeussocks5
 from protocol.mtproto import mtproto_native as mtproto
+
+# ── Transport Adapter System (EMIX v9.3) ──────────────────────────────────────
+# تمام ترنسپورت‌ها (WS, XHTTP, REALITY, gRPC, Hysteria2, TUIC) از این طریق
+# مدیریت می‌شوند. import خودکار همه را در TRANSPORT_REGISTRY ثبت می‌کند.
+import transports  # noqa: F401 — auto-registers all transports
+from transports import (
+    TRANSPORT_REGISTRY, get_transport, list_transports,
+    get_random_sni, generate_x25519_keypair,
+)
 from fastapi import FastAPI, Request, HTTPException, WebSocket, WebSocketDisconnect, Depends
 from fastapi.responses import Response, HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -243,11 +252,28 @@ NODE_KEY_HEADER = "X-RVG-Node-Key"
 NODE_SHARE_PARTS = ("usage", "links", "subs", "requests", "logs")
 
 PROTOCOLS = (
-    "vless-ws", "xhttp-packet-up", "xhttp-stream-up",
-    "trojan-ws", "trojan-xhttp-packet-up", "trojan-xhttp-stream-up",
+    # WebSocket (موجود)
+    "vless-ws",
+    # XHTTP (موجود)
+    "xhttp-packet-up", "xhttp-stream-up",
+    "trojan-xhttp-packet-up", "trojan-xhttp-stream-up",
+    # Trojan
+    "trojan-ws",
+    # gRPC (جدید)
+    "vless-grpc", "trojan-grpc",
+    # REALITY + XTLS Vision (جدید)
+    "vless-reality", "vless-reality-grpc",
+    # Hysteria2 / TUIC (placeholder — sing-box)
+    "hysteria2", "tuic",
+    # MTProto / Shadowsocks (موجود)
     "mtproto", "shadowsocks",
 )
 DEFAULT_PROTOCOL = "vless-ws"
+
+# ── تنظیمات عمومی ترنسپورت ───────────────────────────────────────────────────
+MUX_ENABLED = True           # فعال‌سازی Mux (multiplexing) برای کاهش latency
+MUX_CONCURRENCY = 8          # تعداد کانکشن‌های همزمان Mux
+TFO_ENABLED = True            # TCP Fast Open
 
 def log_activity(kind: str, message: str, level: str = "info"):
     activity_logs.append({
@@ -505,10 +531,6 @@ def generate_share_link(uuid: str, host: str, remark: str = "EMIX", protocol: st
         secret = link.get("mtproto_secret")
         if not secret:
             return f"tg://proxy?server={host}&port=0&secret=not_ready#{quote(remark)}"
-        # مهم: برای MTProto هیچ‌وقت به دامنه‌ی پنل fallback نمی‌کنیم. دامنه‌ی اصلی
-        # Railway فقط HTTP/443 رو سرو می‌کنه و پورت داخلی (مثلاً 8477) از بیرون
-        # اصلاً باز نیست — چنین لینکی کاملاً مرده‌ست (نه پینگ می‌ده نه وصل می‌شه).
-        # تنها آدرس معتبر، دامنه/پورتی هست که Railway موقع ساخت TCP Proxy می‌ده.
         pub_host = link.get("mtproto_public_host")
         pub_port = link.get("mtproto_public_port")
         if not pub_host or not pub_port:
@@ -523,6 +545,39 @@ def generate_share_link(uuid: str, host: str, remark: str = "EMIX", protocol: st
         password = link.get("ss_password", "")
         return generate_ss_link(host, 443, cipher, password, remark)
 
+    # ── Transport Adapter System ──────────────────────────────────────────
+    # ترنسپورت‌های جدید از طریق رجیستری مدیریت می‌شوند
+    transport = get_transport(protocol)
+    if transport:
+        params = {
+            "uuid": uuid, "host": host,
+            "fp": fp, "alpn": alpn,
+        }
+        # REALITY-specific params
+        if "reality" in protocol:
+            link_params = link.get("reality_params", {})
+            if link_params:
+                params.update(link_params)
+            else:
+                params["server_name"] = get_random_sni()
+                params["fingerprint"] = fp
+                keys = link.get("x25519_keys") or generate_x25519_keypair()
+                params["private_key"] = keys[0]
+                params["public_key"] = keys[1]
+        # gRPC params
+        if "grpc" in protocol:
+            params["service_name"] = link.get("grpc_service", "GunService")
+        # Hysteria2 params
+        if protocol == "hysteria2":
+            params["password"] = link.get("hy2_password", "")
+        # TUIC params
+        if protocol == "tuic":
+            params["password"] = link.get("tuic_password", "")
+
+        scheme = "trojan" if protocol.startswith("trojan") else "vless"
+        return transport.share_link(uuid, host, remark, params, scheme)
+
+    # ── Fallback: منطق قدیمی برای ترنسپورت‌های WS/XHTTP ─────────────────
     if protocol == "trojan-ws":
         params = {
             "security": "tls", "type": "ws", "host": host,

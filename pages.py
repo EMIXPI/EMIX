@@ -1,4 +1,4 @@
-# pages.py  -  EMIX v9.2
+# pages.py  -  EMIX v9.3
 # شامل: LOGIN_HTML, DASHBOARD_HTML, get_public_page_html()
 
 LOGIN_HTML = r"""<!DOCTYPE html>
@@ -956,6 +956,11 @@ a{color:inherit;text-decoration:none}
 .proto-chip{font-size:9px;padding:3px 8px;border-radius:6px;font-weight:700;white-space:nowrap}
 .pc-ws{background:var(--accent-d);color:var(--accent2)}
 .pc-xhttp{background:var(--purple-bg);color:#FFB199}
+.pc-reality{background:rgba(34,197,94,.15);color:#4ade80}
+.pc-reality-grpc{color:#86efac}
+.pc-grpc{background:rgba(99,102,241,.15);color:#a5b4fc}
+.pc-hysteria2{background:rgba(244,114,182,.15);color:#f9a8d4}
+.pc-tuic{background:rgba(251,191,36,.15);color:#fde68a}
 .pc-ultra{background:var(--green-bg);color:var(--green-t)}
 .pc-ss{background:var(--purple-bg);color:#FFB199}
 .cfg-sub-tag{font-size:9.5px;color:var(--t3);display:flex;align-items:center;gap:4px;white-space:nowrap}
@@ -2681,7 +2686,7 @@ html,body{max-width:100%;overflow-x:hidden}
     </div>
   </div>
   <div class="dash-footer">
-    <span class="df-text">EMIX v9.2 · Railway · 2025</span>
+    <span class="df-text">EMIX v9.3 · Railway · 2025</span>
     <a class="df-link" href="https://t.me/emixpi" target="_blank"><i class="ti ti-brand-telegram"></i> t.me/emixpi</a>
   </div>
 </section>
@@ -3165,6 +3170,12 @@ function protoBadge(p){
     'vless-ws':['VLESS · WS','pc-ws'],
     'xhttp-packet-up':['VLESS · XHTTP packet-up','pc-xhttp'],
     'xhttp-stream-up':['VLESS · XHTTP stream-up','pc-xhttp'],
+    'vless-reality':['REALITY · Vision','pc-reality'],
+    'vless-reality-grpc':['REALITY · gRPC','pc-reality pc-reality-grpc'],
+    'vless-grpc':['VLESS · gRPC','pc-grpc'],
+    'trojan-grpc':['Trojan · gRPC','pc-grpc'],
+    'hysteria2':['Hysteria2','pc-hysteria2'],
+    'tuic':['TUIC v5','pc-tuic'],
     'trojan-ws':['Trojan · WS','pc-trojan'],
     'trojan-xhttp-packet-up':['Trojan · XHTTP packet-up','pc-trojan'],
     'trojan-xhttp-stream-up':['Trojan · XHTTP stream-up','pc-trojan'],
@@ -5995,6 +6006,11 @@ html,body{{min-height:100%;background:var(--bg);font-family:var(--serif);color:v
 .cfg-vless{{color:#FFB199;border-color:rgba(255,77,46,.18)}}
 .cfg-link-toggle:hover{{background:rgba(255,77,46,.1);border-color:rgba(255,77,46,.28);color:#FFB199}}
 .pc-ws{{background:rgba(255,77,46,.12);color:#FFB199}}
+.pc-reality{{background:rgba(34,197,94,.12);color:#4ade80;border-color:rgba(34,197,94,.25)}}
+.pc-reality-grpc{{background:rgba(34,197,94,.08);color:#86efac}}
+.pc-grpc{{background:rgba(99,102,241,.12);color:#a5b4fc}}
+.pc-hysteria2{{background:rgba(244,114,182,.12);color:#f9a8d4}}
+.pc-tuic{{background:rgba(251,191,36,.12);color:#fde68a}}
 .pc-ultra{{background:rgba(16,185,129,.12)}}
 .cfg-status.ok{{background:rgba(16,185,129,.12)}}
 .lock-shield{{background:rgba(255,77,46,.12);border-color:rgba(255,77,46,.3)}}
@@ -6030,7 +6046,7 @@ html,body{{min-height:100%;background:var(--bg);font-family:var(--serif);color:v
   <div id="root">
     <div class="empty-state"><i class="ti ti-loader-2" style="animation:spin 1s linear infinite"></i>در حال بارگذاری...</div>
   </div>
-  <div class="footer">کانال رسمی: <a href="https://t.me/emixpi" target="_blank">@emixpi</a> · EMIX v9.2</div>
+  <div class="footer">کانال رسمی: <a href="https://t.me/emixpi" target="_blank">@emixpi</a> · EMIX v9.3</div>
 </div>
 <script>
 const UUID_KEY='{uuid_key}';
@@ -6062,10 +6078,15 @@ function toFa(n){{return String(n).replace(/\\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d])}
 function protoChip(p){{
   p = p || 'vless-ws';
   if(p==='mtproto')return '<span class="proto-chip pc-trojan"><i class="ti ti-brand-telegram"></i> Telegram Proxy</span>';
+  if(p==='hysteria2')return '<span class="proto-chip pc-hysteria2"><i class="ti ti-bolt"></i> Hysteria2</span>';
+  if(p==='tuic')return '<span class="proto-chip pc-tuic"><i class="ti ti-rocket"></i> TUIC v5</span>';
   if(p.startsWith('shadowsocks')){{
     const isWsVariant = p !== 'shadowsocks';
     return '<span class="proto-chip pc-ss"><i class="ti ti-shield-lock-filled"></i> Shadowsocks'+(isWsVariant?' · '+esc(p.replace('shadowsocks-','')):'')+'</span>';
   }}
+  if(p==='vless-reality')return '<span class="proto-chip pc-reality"><i class="ti ti-eye-bolt"></i> REALITY · Vision</span>';
+  if(p==='vless-reality-grpc')return '<span class="proto-chip pc-reality pc-reality-grpc"><i class="ti ti-eye-bolt"></i> REALITY · gRPC</span>';
+  if(p==='vless-grpc'||p==='trojan-grpc')return '<span class="proto-chip pc-grpc"><i class="ti ti-network"></i> '+(p.startsWith('trojan')?'Trojan':'VLESS')+' · gRPC</span>';
   if(p.startsWith('trojan'))return '<span class="proto-chip pc-trojan"><i class="ti ti-shield-lock"></i> '+esc(p)+'</span>';
   if(p.startsWith('xhttp'))return '<span class="proto-chip pc-xhttp">'+esc(p)+'</span>';
   return '<span class="proto-chip pc-ws">VLESS · WS</span>';
