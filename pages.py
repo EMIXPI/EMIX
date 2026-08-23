@@ -1,4 +1,4 @@
-# pages.py  -  EMIX v9.3
+# pages.py  -  EMIX v9.2
 # شامل: LOGIN_HTML, DASHBOARD_HTML, get_public_page_html()
 
 LOGIN_HTML = r"""<!DOCTYPE html>
@@ -956,11 +956,6 @@ a{color:inherit;text-decoration:none}
 .proto-chip{font-size:9px;padding:3px 8px;border-radius:6px;font-weight:700;white-space:nowrap}
 .pc-ws{background:var(--accent-d);color:var(--accent2)}
 .pc-xhttp{background:var(--purple-bg);color:#FFB199}
-.pc-reality{background:rgba(34,197,94,.15);color:#4ade80}
-.pc-reality-grpc{color:#86efac}
-.pc-grpc{background:rgba(99,102,241,.15);color:#a5b4fc}
-.pc-hysteria2{background:rgba(244,114,182,.15);color:#f9a8d4}
-.pc-tuic{background:rgba(251,191,36,.15);color:#fde68a}
 .pc-ultra{background:var(--green-bg);color:var(--green-t)}
 .pc-ss{background:var(--purple-bg);color:#FFB199}
 .cfg-sub-tag{font-size:9.5px;color:var(--t3);display:flex;align-items:center;gap:4px;white-space:nowrap}
@@ -1714,28 +1709,6 @@ html,body{max-width:100%;overflow-x:hidden}
               <div class="cm-opt-radio"></div>
               <div class="cm-opt-icon"><i class="ti ti-rocket"></i></div>
               <div class="cm-opt-text"><div class="cm-opt-title">XHTTP · stream-up</div><div class="cm-opt-desc">تاخیر پایین‌تر برای اتصال‌های پرسرعت</div></div>
-            </div>
-            <div class="cm-opt" data-t="reality" onclick="cmSelectTransport('reality',this)">
-              <div class="cm-opt-radio"></div>
-              <div class="cm-opt-icon"><i class="ti ti-eye-bolt"></i></div>
-              <div class="cm-opt-text"><div class="cm-opt-title">REALITY · Vision</div><div class="cm-opt-desc">شبیه‌سازی TLS واقعی — امن‌ترین روش</div></div>
-            </div>
-            <div class="cm-opt" data-t="grpc" onclick="cmSelectTransport('grpc',this)">
-              <div class="cm-opt-radio"></div>
-              <div class="cm-opt-icon"><i class="ti ti-network"></i></div>
-              <div class="cm-opt-text"><div class="cm-opt-title">gRPC</div><div class="cm-opt-desc">پرفورمنس بالا با multiplexing داخلی</div></div>
-            </div>
-            <div class="cm-opt" data-t="hysteria2" onclick="cmSelectTransport('hysteria2',this)">
-              <div class="cm-opt-radio"></div>
-              <div class="cm-opt-icon"><i class="ti ti-bolt"></i></div>
-              <div class="cm-opt-text"><div class="cm-opt-title">Hysteria2 (QUIC)</div><div class="cm-opt-desc">پروتکل فوق‌سریع QUIC — نیاز به sing-box</div></div>
-              <span class="cm-opt-tag" style="background:rgba(244,114,182,.15);color:#f9a8d4">جدید</span>
-            </div>
-            <div class="cm-opt" data-t="tuic" onclick="cmSelectTransport('tuic',this)">
-              <div class="cm-opt-radio"></div>
-              <div class="cm-opt-icon"><i class="ti ti-rocket"></i></div>
-              <div class="cm-opt-text"><div class="cm-opt-title">TUIC v5 (QUIC)</div><div class="cm-opt-desc">سبک و کم‌مصرف — نیاز به sing-box</div></div>
-              <span class="cm-opt-tag" style="background:rgba(251,191,36,.15);color:#fde68a">جدید</span>
             </div>
           </div></div></div>
         </div>
@@ -2708,7 +2681,7 @@ html,body{max-width:100%;overflow-x:hidden}
     </div>
   </div>
   <div class="dash-footer">
-    <span class="df-text">EMIX v9.3 · Railway · 2025</span>
+    <span class="df-text">EMIX v9.2 · Railway · 2025</span>
     <a class="df-link" href="https://t.me/emixpi" target="_blank"><i class="ti ti-brand-telegram"></i> t.me/emixpi</a>
   </div>
 </section>
@@ -3192,12 +3165,6 @@ function protoBadge(p){
     'vless-ws':['VLESS · WS','pc-ws'],
     'xhttp-packet-up':['VLESS · XHTTP packet-up','pc-xhttp'],
     'xhttp-stream-up':['VLESS · XHTTP stream-up','pc-xhttp'],
-    'vless-reality':['REALITY · Vision','pc-reality'],
-    'vless-reality-grpc':['REALITY · gRPC','pc-reality pc-reality-grpc'],
-    'vless-grpc':['VLESS · gRPC','pc-grpc'],
-    'trojan-grpc':['Trojan · gRPC','pc-grpc'],
-    'hysteria2':['Hysteria2','pc-hysteria2'],
-    'tuic':['TUIC v5','pc-tuic'],
     'trojan-ws':['Trojan · WS','pc-trojan'],
     'trojan-xhttp-packet-up':['Trojan · XHTTP packet-up','pc-trojan'],
     'trojan-xhttp-stream-up':['Trojan · XHTTP stream-up','pc-trojan'],
@@ -3335,15 +3302,6 @@ async function loadActivity(){
   }catch(e){console.error(e)}
 }
 let allSubsList=[],allLinksList=[],onlineNodesList=[];
-async function pingLink(uuid,btn){
-  const ic=btn.querySelector('i');ic.className='ti ti-loader-2';ic.style.animation='spin 1s linear infinite';
-  try{
-    const r=await authF(`/api/links/${uuid}/ping`,{method:'POST'});const d=await r.json();
-    if(d.ok)toast('پینگ موفق'+(d.ms?` — ${d.ms}ms`:''),'ok');else toast('پینگ ناموفق: '+(d.detail||'بدون پاسخ'),d.detail&&d.detail.includes('UDP')?'':'err');
-    loadLinks();
-  }catch(e){toast('خطا در تست پینگ','err')}
-  finally{ic.className='ti ti-activity';ic.style.animation=''}
-}
 async function loadLinks(){
   try{
     const [lr,sr,nr,zr]=await Promise.all([authF('/api/links'),authF('/api/subs'),authF('/api/nodes/aggregate').catch(()=>null),authF('/api/zeus-proxy/status').catch(()=>null)]);
@@ -3422,7 +3380,6 @@ async function loadLinks(){
       <div class="cfg-divider-v"></div>
       <div class="cfg-badges-col">
         ${protoBadge(l.protocol)}
-        ${l.last_ping ? `<span class="cfg-sub-tag" style="color:${l.last_ping.ok?'var(--green)':'var(--red-t)'}"><i class="ti ${l.last_ping.ok?'ti-wifi':'ti-wifi-off'}"></i> پینگ: ${l.last_ping.ok?(l.last_ping.ms?l.last_ping.ms+'ms':'پاسخ داد'):'قطع'}</span>` : ''}
         ${isMt && l.ad_tag ? `<span class="cfg-sub-tag" style="background:linear-gradient(135deg,rgba(255,122,61,.18),rgba(232,89,12,.12));color:#FFB199;padding:3px 9px;border-radius:20px;border:1px solid rgba(255,122,61,.25);font-weight:700"><i class="ti ti-speakerphone" style="color:#FFB199"></i> تبلیغ فعال</span>` : ''}
         ${isMt && l.mtproto_public_host ? `<span class="cfg-sub-tag"><i class="ti ti-route"></i> ${esc(l.mtproto_public_host)}:${l.mtproto_public_port}</span>` : ''}
         ${isMt && !l.mtproto_public_host && l.mtproto_public_pending ? `<span class="cfg-sub-tag" style="color:var(--amber-t)"><i class="ti ti-loader-2" style="animation:spin 1s linear infinite"></i> در حال ساخت TCP Proxy عمومی...</span>` : ''}
@@ -3434,7 +3391,6 @@ async function loadLinks(){
         <div class="cfg-actions">
         <button class="tog${allowed?' on':''}" onclick="toggleActive('${l.uuid}',${!l.active}${isNode?`,'${l._nodeId}'`:''})" title="فعال/غیرفعال"></button>
         ${!isNode?adBtn:''}
-        ${!isNode?`<button class="btn btn-sm btn-g btn-icon" onclick="pingLink('${l.uuid}',this)" title="تست پینگ"><i class="ti ti-activity"></i></button>`:''}
         <button class="btn btn-sm btn-g btn-icon" onclick="navigator.clipboard.writeText('${esc(l.vless_link)}').then(()=>toast('لینک کپی شد','ok'))" title="کپی لینک"><i class="ti ti-copy"></i></button>
         ${isMt
           ? `<button class="btn btn-sm btn-g btn-icon" onclick="openMtInfoModal('${esc(l.label)}','${esc(l.mtproto_secret||'')}','${esc(l.vless_link)}',${!!l.mtproto_public_host})" title="اطلاعات پروکسی"><i class="ti ti-info-circle"></i></button>`
@@ -3530,13 +3486,9 @@ const BASE_INFO = {
   telproxy: { icon:'ti-brand-telegram', title:'Telegram Proxy', desc:'پروکسی MTProto مستقیم روی یک پورت TCP اختصاصی' },
 };
 const TRANSPORT_INFO = {
-  'ws':               { icon:'ti-link',      title:'WebSocket',            desc:'پایدار و سازگار با همه شرایط شبکه' },
-  'xhttp-packet-up':  { icon:'ti-package',   title:'XHTTP · packet-up',    desc:'سازگاری بالا با CDN و پروکسی‌ها' },
-  'xhttp-stream-up':  { icon:'ti-rocket',    title:'XHTTP · stream-up',    desc:'تاخیر پایین‌تر برای اتصال‌های پرسرعت' },
-  'reality':          { icon:'ti-eye-bolt',  title:'REALITY · Vision',     desc:'شبیه‌سازی TLS واقعی — امن‌ترین روش' },
-  'grpc':             { icon:'ti-network',   title:'gRPC',                 desc:'پرفورمنس بالا با multiplexing داخلی' },
-  'hysteria2':        { icon:'ti-bolt',      title:'Hysteria2 (QUIC)',     desc:'پروتکل فوق‌سریع QUIC — نیاز به sing-box' },
-  'tuic':             { icon:'ti-rocket',    title:'TUIC v5 (QUIC)',       desc:'سبک و کم‌مصرف — نیاز به sing-box' }
+  'ws':               { icon:'ti-link',    title:'WebSocket',            desc:'پایدار و سازگار با همه شرایط شبکه' },
+  'xhttp-packet-up':  { icon:'ti-package', title:'XHTTP · packet-up',    desc:'سازگاری بالا با CDN و پروکسی‌ها' },
+  'xhttp-stream-up':  { icon:'ti-rocket',  title:'XHTTP · stream-up',    desc:'تاخیر پایین‌تر برای اتصال‌های پرسرعت' }
 };
 
 function cmSelectBase(val, el){
@@ -3621,25 +3573,6 @@ function cmApplyProto(){
   if (cmBase === 'shadowsocks') {
     const val = cmTransport === 'ws' ? 'shadowsocks' : `shadowsocks-${cmTransport}`;
     document.getElementById('nl-proto').value = val;
-    return;
-  }
-  // پروتکل‌های مستقل (وابسته به VLESS/Trojan نیستند)
-  if (cmTransport === 'hysteria2') {
-    document.getElementById('nl-proto').value = 'hysteria2';
-    return;
-  }
-  if (cmTransport === 'tuic') {
-    document.getElementById('nl-proto').value = 'tuic';
-    return;
-  }
-  // REALITY فقط با VLESS معنی داره
-  if (cmTransport === 'reality') {
-    document.getElementById('nl-proto').value = 'vless-reality';
-    return;
-  }
-  // gRPC هم برای VLESS و هم Trojan
-  if (cmTransport === 'grpc') {
-    document.getElementById('nl-proto').value = cmBase === 'trojan' ? 'trojan-grpc' : 'vless-grpc';
     return;
   }
   const val = cmTransport === 'ws'
@@ -6062,11 +5995,6 @@ html,body{{min-height:100%;background:var(--bg);font-family:var(--serif);color:v
 .cfg-vless{{color:#FFB199;border-color:rgba(255,77,46,.18)}}
 .cfg-link-toggle:hover{{background:rgba(255,77,46,.1);border-color:rgba(255,77,46,.28);color:#FFB199}}
 .pc-ws{{background:rgba(255,77,46,.12);color:#FFB199}}
-.pc-reality{{background:rgba(34,197,94,.12);color:#4ade80;border-color:rgba(34,197,94,.25)}}
-.pc-reality-grpc{{background:rgba(34,197,94,.08);color:#86efac}}
-.pc-grpc{{background:rgba(99,102,241,.12);color:#a5b4fc}}
-.pc-hysteria2{{background:rgba(244,114,182,.12);color:#f9a8d4}}
-.pc-tuic{{background:rgba(251,191,36,.12);color:#fde68a}}
 .pc-ultra{{background:rgba(16,185,129,.12)}}
 .cfg-status.ok{{background:rgba(16,185,129,.12)}}
 .lock-shield{{background:rgba(255,77,46,.12);border-color:rgba(255,77,46,.3)}}
@@ -6102,7 +6030,7 @@ html,body{{min-height:100%;background:var(--bg);font-family:var(--serif);color:v
   <div id="root">
     <div class="empty-state"><i class="ti ti-loader-2" style="animation:spin 1s linear infinite"></i>در حال بارگذاری...</div>
   </div>
-  <div class="footer">کانال رسمی: <a href="https://t.me/emixpi" target="_blank">@emixpi</a> · EMIX v9.3</div>
+  <div class="footer">کانال رسمی: <a href="https://t.me/emixpi" target="_blank">@emixpi</a> · EMIX v9.2</div>
 </div>
 <script>
 const UUID_KEY='{uuid_key}';
@@ -6134,15 +6062,10 @@ function toFa(n){{return String(n).replace(/\\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d])}
 function protoChip(p){{
   p = p || 'vless-ws';
   if(p==='mtproto')return '<span class="proto-chip pc-trojan"><i class="ti ti-brand-telegram"></i> Telegram Proxy</span>';
-  if(p==='hysteria2')return '<span class="proto-chip pc-hysteria2"><i class="ti ti-bolt"></i> Hysteria2</span>';
-  if(p==='tuic')return '<span class="proto-chip pc-tuic"><i class="ti ti-rocket"></i> TUIC v5</span>';
   if(p.startsWith('shadowsocks')){{
     const isWsVariant = p !== 'shadowsocks';
     return '<span class="proto-chip pc-ss"><i class="ti ti-shield-lock-filled"></i> Shadowsocks'+(isWsVariant?' · '+esc(p.replace('shadowsocks-','')):'')+'</span>';
   }}
-  if(p==='vless-reality')return '<span class="proto-chip pc-reality"><i class="ti ti-eye-bolt"></i> REALITY · Vision</span>';
-  if(p==='vless-reality-grpc')return '<span class="proto-chip pc-reality pc-reality-grpc"><i class="ti ti-eye-bolt"></i> REALITY · gRPC</span>';
-  if(p==='vless-grpc'||p==='trojan-grpc')return '<span class="proto-chip pc-grpc"><i class="ti ti-network"></i> '+(p.startsWith('trojan')?'Trojan':'VLESS')+' · gRPC</span>';
   if(p.startsWith('trojan'))return '<span class="proto-chip pc-trojan"><i class="ti ti-shield-lock"></i> '+esc(p)+'</span>';
   if(p.startsWith('xhttp'))return '<span class="proto-chip pc-xhttp">'+esc(p)+'</span>';
   return '<span class="proto-chip pc-ws">VLESS · WS</span>';

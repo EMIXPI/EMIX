@@ -48,17 +48,6 @@ import botgeneratedomin
 import bottokentcpproxy
 import zeussocks5
 from protocol.mtproto import mtproto_native as mtproto
-
-# ── Transport Adapter System (EMIX v9.3) ──────────────────────────────────────
-# تمام ترنسپورت‌ها (WS, XHTTP, REALITY, gRPC, Hysteria2, TUIC) از این طریق
-# مدیریت می‌شوند. import خودکار همه را در TRANSPORT_REGISTRY ثبت می‌کند.
-import transports  # noqa: F401 — auto-registers all transports
-from transports import (
-    TRANSPORT_REGISTRY, get_transport, list_transports,
-    get_random_sni, generate_x25519_keypair,
-    )
-import xraybridge
-import singboxbridge
 from fastapi import FastAPI, Request, HTTPException, WebSocket, WebSocketDisconnect, Depends
 from fastapi.responses import Response, HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -87,7 +76,7 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
-    )
+)
 
 # ── Persistence ───────────────────────────────────────────────────────────────
 DATA_DIR = Path(os.environ.get("DATA_DIR", "/data"))
@@ -254,28 +243,11 @@ NODE_KEY_HEADER = "X-RVG-Node-Key"
 NODE_SHARE_PARTS = ("usage", "links", "subs", "requests", "logs")
 
 PROTOCOLS = (
-    # WebSocket (موجود)
-    "vless-ws",
-    # XHTTP (موجود)
-    "xhttp-packet-up", "xhttp-stream-up",
-    "trojan-xhttp-packet-up", "trojan-xhttp-stream-up",
-    # Trojan
-    "trojan-ws",
-    # gRPC (جدید)
-    "vless-grpc", "trojan-grpc",
-    # REALITY + XTLS Vision (جدید)
-    "vless-reality", "vless-reality-grpc",
-    # Hysteria2 / TUIC (placeholder — sing-box)
-    "hysteria2", "tuic",
-    # MTProto / Shadowsocks (موجود)
+    "vless-ws", "xhttp-packet-up", "xhttp-stream-up",
+    "trojan-ws", "trojan-xhttp-packet-up", "trojan-xhttp-stream-up",
     "mtproto", "shadowsocks",
-    )
+)
 DEFAULT_PROTOCOL = "vless-ws"
-
-# ── تنظیمات عمومی ترنسپورت ───────────────────────────────────────────────────
-MUX_ENABLED = True           # فعال‌سازی Mux (multiplexing) برای کاهش latency
-MUX_CONCURRENCY = 8          # تعداد کانکشن‌های همزمان Mux
-TFO_ENABLED = True            # TCP Fast Open
 
 def log_activity(kind: str, message: str, level: str = "info"):
     activity_logs.append({
@@ -339,24 +311,6 @@ async def startup():
     )
     await load_state()
     await _restart_mtproto_instances()
-    # ── Xray bridge: اگر لینک REALITY/gRPC وجود دارد، خودکار بالا بیا ──
-    try:
-        async with LINKS_LOCK:
-            _xray_links = [dict(d) for d in LINKS.values()]
-        if any(l.get("protocol") in ("vless-reality", "vless-reality-grpc", "vless-grpc") for l in _xray_links):
-            asyncio.create_task(xraybridge.sync_and_start(_xray_links))
-            log_activity("system", "Xray bridge در حال راه‌اندازی برای پروتکل‌های جدید", "info")
-    except Exception as exc:
-        logger.warning(f"Xray bridge autostart skipped: {exc}")
-    # ── sing-box bridge: اگر لینک Hysteria2/TUIC وجود دارد، خودکار بالا بیا ──
-    try:
-        async with LINKS_LOCK:
-            _sb_links = [dict(d) for d in LINKS.values()]
-        if any(l.get("protocol") in ("hysteria2", "tuic") for l in _sb_links):
-            asyncio.create_task(singboxbridge.sync_and_start(_sb_links))
-            log_activity("system", "sing-box bridge در حال راه‌اندازی برای پروتکل‌های QUIC", "info")
-    except Exception as exc:
-        logger.warning(f"sing-box bridge autostart skipped: {exc}")
     log_activity("system", "سرور راه‌اندازی شد", "ok")
     logger.info(f"EMIX v9.2 started on port {CONFIG['port']}")
 
@@ -551,6 +505,10 @@ def generate_share_link(uuid: str, host: str, remark: str = "EMIX", protocol: st
         secret = link.get("mtproto_secret")
         if not secret:
             return f"tg://proxy?server={host}&port=0&secret=not_ready#{quote(remark)}"
+        # مهم: برای MTProto هیچ‌وقت به دامنه‌ی پنل fallback نمی‌کنیم. دامنه‌ی اصلی
+        # Railway فقط HTTP/443 رو سرو می‌کنه و پورت داخلی (مثلاً 8477) از بیرون
+        # اصلاً باز نیست — چنین لینکی کاملاً مرده‌ست (نه پینگ می‌ده نه وصل می‌شه).
+        # تنها آدرس معتبر، دامنه/پورتی هست که Railway موقع ساخت TCP Proxy می‌ده.
         pub_host = link.get("mtproto_public_host")
         pub_port = link.get("mtproto_public_port")
         if not pub_host or not pub_port:
@@ -565,59 +523,6 @@ def generate_share_link(uuid: str, host: str, remark: str = "EMIX", protocol: st
         password = link.get("ss_password", "")
         return generate_ss_link(host, 443, cipher, password, remark)
 
-    # ── Transport Adapter System (فقط پروتکل‌های جدید) ────────────────────
-    # مهم: پروتکل‌های اورجینال (WS/XHTTP) هرگز نباید از این مسیر عبور کنند —
-    # منطق اصلی آنها در پایین همین تابع حفظ شده تا لینک‌ها بایت‌به‌بایت مثل قبل
-    # تولید شوند و کلاینت‌های فعلی بدون هیچ تغییری به کار خود ادامه دهند.
-    NEW_TRANSPORT_KEYS = (
-        "vless-reality", "vless-reality-grpc", "vless-grpc",
-        "trojan-grpc", "hysteria2", "tuic",
-    )
-    transport = get_transport(protocol) if protocol in NEW_TRANSPORT_KEYS else None
-    if transport:
-        params = {
-            "uuid": uuid, "host": host,
-            "fp": fp, "fingerprint": fp, "alpn": alpn,
-        }
-        # REALITY-specific params — پایدار برای هر لینک (یک‌بار تولید، همیشه ثابت)
-        if "reality" in protocol:
-            link_params = _ensure_reality_params(link)
-            params.update(link_params)
-            # پورت واقعی که Xray bridge روی آن گوش می‌دهد
-            params["port"] = xraybridge.REALITY_PORT
-            if "grpc" in protocol:
-                params["type"] = "grpc"
-                params["service_name"] = link.get("grpc_service", "GunService")
-        elif "grpc" in protocol:
-            # gRPC بدون TLS توسط پل داخلی سرو می‌شود (h2c)
-            if not link.get("grpc_service"):
-                link["grpc_service"] = "GunService"
-                asyncio.get_event_loop().create_task(_safe_save_state())
-            params["service_name"] = link["grpc_service"]
-            params["security"] = "none"
-            params["port"] = xraybridge.GRPC_PORT
-        # Hysteria2 params — پایدار برای هر لینک (یک‌بار تولید، همیشه ثابت)
-        if protocol == "hysteria2":
-            hp = _ensure_hy2_params(link)
-            params["password"] = hp["password"]
-            params["obfs_password"] = hp["obfs_password"]
-            # پورت واقعی که پل sing-box روی آن گوش می‌دهد
-            params["port"] = singboxbridge.HY2_PORT
-            # پل با گواهی self-signed سرو می‌کند
-            params["sni"] = host
-            params["insecure"] = "1"
-        # TUIC params
-        if protocol == "tuic":
-            tp = _ensure_tuic_params(link)
-            params["password"] = tp["password"]
-            params["port"] = singboxbridge.TUIC_PORT
-            params["sni"] = host
-            params["insecure"] = "1"
-
-        scheme = "trojan" if protocol.startswith("trojan") else "vless"
-        return transport.share_link(uuid, host, remark, params, scheme)
-
-    # ── Fallback: منطق قدیمی برای ترنسپورت‌های WS/XHTTP ─────────────────
     if protocol == "trojan-ws":
         params = {
             "security": "tls", "type": "ws", "host": host,
@@ -664,58 +569,6 @@ def generate_share_link(uuid: str, host: str, remark: str = "EMIX", protocol: st
         }
     query = "&".join(f"{k}={quote(str(v))}" for k, v in params.items())
     return f"vless://{uuid}@{host}:443?{query}#{quote(remark)}"
-
-def _ensure_reality_params(link: dict) -> dict:
-    """پارامترهای REALITY را برای هر لینک یک‌بار تولید و در خود لینک ذخیره می‌کند.
-
-    بدون این، کلید/SNI/shortId در هر بار نمایش لینک تغییر می‌کرد و کلاینت‌ها
-    هرگز نمی‌توانستند وصل بمانند. کلید با الگوریتم x25519 سازگار با Xray
-    تولید می‌شود تا مستقیماً در inbound پل Xray هم استفاده شود.
-    """
-    rp = link.get("reality_params")
-    if isinstance(rp, dict) and rp.get("private_key") and rp.get("public_key") \
-            and rp.get("server_name") and rp.get("short_ids"):
-        return rp
-    priv, pub = xraybridge.generate_keypair()
-    rp = {
-        "server_name": get_random_sni(),
-        "fingerprint": link.get("fingerprint", "chrome"),
-        "private_key": priv,
-        "public_key": pub,
-        "short_ids": [xraybridge.generate_short_id(8)],
-    }
-    link["reality_params"] = rp
-    asyncio.get_event_loop().create_task(_safe_save_state())
-    return rp
-
-async def _safe_save_state():
-    """ذخیره‌ی state به‌صورت ایمن (بدون شکستن جریان اصلی در صورت خطا)."""
-    try:
-        await save_state()
-    except Exception as exc:
-        logger.warning(f"save_state after reality-params init failed: {exc}")
-
-def _ensure_hy2_params(link: dict) -> dict:
-    """رمزهای Hysteria2 را برای هر لینک یک‌بار تولید و ذخیره می‌کند."""
-    pw = link.get("hy2_password")
-    if pw:
-        return {"password": pw, "obfs_password": link.get("hy2_obfs_password", "")}
-    pw = secrets.token_urlsafe(16)
-    opw = secrets.token_urlsafe(16)
-    link["hy2_password"] = pw
-    link["hy2_obfs_password"] = opw
-    asyncio.get_event_loop().create_task(_safe_save_state())
-    return {"password": pw, "obfs_password": opw}
-
-def _ensure_tuic_params(link: dict) -> dict:
-    """رمز TUIC را برای هر لینک یک‌بار تولید و ذخیره می‌کند."""
-    pw = link.get("tuic_password")
-    if pw:
-        return {"password": pw}
-    pw = secrets.token_urlsafe(16)
-    link["tuic_password"] = pw
-    asyncio.get_event_loop().create_task(_safe_save_state())
-    return {"password": pw}
 
 def uptime() -> str:
     secs = int(time.time() - stats["start_time"])
@@ -1776,13 +1629,6 @@ async def _create_link_core(body: dict) -> dict:
             ss_cipher = DEFAULT_CIPHER
         link_data["ss_cipher"] = ss_cipher
         link_data["ss_password"] = secrets.token_urlsafe(16)
-
-    if protocol == "hysteria2":
-        # رمزها یک‌بار در زمان ساخت تولید می‌شوند تا هرگز تغییر نکنند
-        link_data["hy2_password"] = secrets.token_urlsafe(16)
-        link_data["hy2_obfs_password"] = secrets.token_urlsafe(16)
-    elif protocol == "tuic":
-        link_data["tuic_password"] = secrets.token_urlsafe(16)
     
     async with LINKS_LOCK:
         LINKS[uid] = link_data
@@ -1795,12 +1641,6 @@ async def _create_link_core(body: dict) -> dict:
                     ids.append(uid)
 
     asyncio.create_task(save_state())
-    # اگر لینک جدید از پروتکل‌های REALITY/gRPC باشد، پل Xray همگام می‌شود
-    if protocol in ("vless-reality", "vless-reality-grpc", "vless-grpc"):
-        asyncio.create_task(_xray_bridge_sync())
-    # اگر لینک جدید از پروتکل‌های QUIC باشد، پل sing-box همگام می‌شود
-    if protocol in ("hysteria2", "tuic"):
-        asyncio.create_task(_singbox_bridge_sync())
     log_activity("link", f"کانفیگ «{label}» ساخته شد", "ok")
     host = get_host()
     return {
@@ -1811,168 +1651,10 @@ async def _create_link_core(body: dict) -> dict:
         "sub_url": f"https://{host}/sub/{uid}",
     }
 
-
-async def _xray_bridge_sync():
-    """بعد از هر تغییر لینک، کانفیگ پل Xray را با لینک‌های فعلی همگام می‌کند."""
-    try:
-        async with LINKS_LOCK:
-            links = [dict(d) for d in LINKS.values()]
-        if any(l.get("protocol") in ("vless-reality", "vless-reality-grpc", "vless-grpc") for l in links):
-            await xraybridge.sync_and_start(links)
-    except Exception as exc:
-        logger.warning(f"xray bridge sync failed: {exc}")
-
-async def _singbox_bridge_sync():
-    """بعد از هر تغییر لینک QUIC، کانفیگ پل sing-box را همگام می‌کند."""
-    try:
-        async with LINKS_LOCK:
-            links = [dict(d) for d in LINKS.values()]
-        await singboxbridge.sync_and_start(links)
-    except Exception as exc:
-        logger.warning(f"sing-box bridge sync failed: {exc}")
-
 @app.post("/api/links")
 async def create_link(request: Request, _=Depends(require_auth)):
     body = await request.json()
     return await _create_link_core(body)
-
-
-# ── Xray Bridge API (پروتکل‌های REALITY / gRPC) ──────────────────────────────
-@app.get("/api/xray/status")
-async def api_xray_status(_=Depends(require_auth)):
-    return xraybridge.status()
-
-@app.post("/api/xray/start")
-async def api_xray_start(_=Depends(require_auth)):
-    async with LINKS_LOCK:
-        links = [dict(d) for d in LINKS.values()]
-    result = await xraybridge.sync_and_start(links)
-    log_activity("system", "Xray bridge " + ("اجر شد" if result.get("running") else "به‌روزرسانی شد"), "ok" if result.get("ok") else "err")
-    return result
-
-@app.post("/api/xray/stop")
-async def api_xray_stop(_=Depends(require_auth)):
-    await xraybridge.stop()
-    log_activity("system", "Xray bridge متوقف شد", "info")
-    return {"ok": True, "running": False}
-
-@app.post("/api/xray/install")
-async def api_xray_install(_=Depends(require_auth)):
-    return await xraybridge.install()
-
-
-# ── Sing-box Bridge API (پروتکل‌های Hysteria2 / TUIC) ────────────────────────
-@app.get("/api/singbox/status")
-async def api_singbox_status(_=Depends(require_auth)):
-    return singboxbridge.status()
-
-@app.post("/api/singbox/start")
-async def api_singbox_start(_=Depends(require_auth)):
-    async with LINKS_LOCK:
-        links = [dict(d) for d in LINKS.values()]
-    result = await singboxbridge.sync_and_start(links)
-    log_activity("system", "sing-box bridge " + ("اجر شد" if result.get("running") else "به‌روزرسانی شد"), "ok" if result.get("ok") else "err")
-    return result
-
-@app.post("/api/singbox/stop")
-async def api_singbox_stop(_=Depends(require_auth)):
-    await singboxbridge.stop()
-    log_activity("system", "sing-box bridge متوقف شد", "info")
-    return {"ok": True, "running": False}
-
-@app.post("/api/singbox/install")
-async def api_singbox_install(_=Depends(require_auth)):
-    return await singboxbridge.install()
-
-
-# ── تست پینگ کانفیگ (بدون اختلال در عملکرد بک‌اند) ───────────────────────────
-def _ping_target(protocol: str):
-    """هدف تست برای هر پروتکل را برمی‌گرداند: (port, transport)."""
-    if protocol == "mtproto":
-        return None, "tcp"          # پورت داینامیک — جداگانه خوانده می‌شود
-    if protocol == "vless-reality" or protocol == "vless-reality-grpc":
-        return xraybridge.REALITY_PORT, "tcp"
-    if "grpc" in protocol:
-        return xraybridge.GRPC_PORT, "tcp"
-    if protocol == "hysteria2":
-        return singboxbridge.HY2_PORT, "udp"
-    if protocol == "tuic":
-        return singboxbridge.TUIC_PORT, "udp"
-    return 443, "tcp"               # ws/xhttp/trojan/ss روی خودِ سرور
-
-def _probe_tcp(host: str, port: int, timeout: float = 3.0):
-    """اتصال TCP و اندازه‌گیری زمان handshake (میلی‌ثانیه)."""
-    import socket as _s
-    start = time.perf_counter()
-    try:
-        with _s.create_connection((host, port), timeout=timeout):
-            return round((time.perf_counter() - start) * 1000, 1)
-    except Exception:
-        return None
-
-def _probe_udp(host: str, port: int, timeout: float = 2.5) -> bool:
-    """پروب UDP/QUIC: سرورهای QUIC به بسته‌ی نامعتبر با Version Negotiation جواب می‌دهند."""
-    import socket as _s
-    try:
-        family = _s.AF_INET6 if ":" in host else _s.AF_INET
-        with _s.socket(family, _s.SOCK_DGRAM) as sock:
-            sock.settimeout(timeout)
-            # بسته‌ی QUIC Initial با version صفر → پاسخ Version Negotiation تضمینی است
-            payload = bytes([0xC0, 0, 0, 0, 1]) + b"\x00" * 20
-            sock.sendto(payload, (host, port))
-            data, _ = sock.recvfrom(1500)
-            return bool(data)
-    except Exception:
-        return False
-
-async def _run_ping_probe(uid: str) -> dict:
-    """تست اتصال لینک را اجرا و نتیجه را ذخیره می‌کند (غیرمسدودکننده)."""
-    host = get_host()
-    async with LINKS_LOCK:
-        link = LINKS.get(uid)
-        if not link:
-            raise HTTPException(status_code=404, detail="کانفیگ یافت نشد")
-        protocol = link.get("protocol", DEFAULT_PROTOCOL)
-        port_override = link.get("mtproto_port") or (
-            link.get("mtproto_public_port") if protocol == "mtproto" else None
-        )
-    port, kind = _ping_target(protocol)
-    if protocol == "mtproto" and port_override:
-        port = int(port_override)
-
-    result: dict
-    loop = asyncio.get_event_loop()
-
-    def _do():
-        if port is None:
-            return {"ok": False, "ms": None, "detail": "پورت مشخص نیست"}
-        if kind == "tcp":
-            ms = _probe_tcp(host, port)
-            if ms is not None:
-                return {"ok": True, "ms": ms, "detail": f"TCP {host}:{port}"}
-            return {"ok": False, "ms": None, "detail": f"بدون پاسخ TCP {host}:{port}"}
-        ok_udp = _probe_udp(host, port)
-        if ok_udp:
-            return {"ok": True, "ms": None, "detail": f"UDP/QUIC {host}:{port} پاسخ داد"}
-        return {"ok": False, "ms": None, "detail": f"بدون پاسخ UDP {host}:{port}"}
-
-    result = await loop.run_in_executor(None, _do)
-    result["checked_at"] = datetime.now().isoformat()
-
-    # ذخیره‌ی نتیجه روی خود لینک تا در UI نمایش داده شود
-    async with LINKS_LOCK:
-        if uid in LINKS:
-            LINKS[uid]["last_ping"] = result
-    asyncio.create_task(save_state())
-    return result
-
-@app.post("/api/links/{uid}/ping")
-async def api_ping_link(uid: str, _=Depends(require_auth)):
-    result = await _run_ping_probe(uid)
-    status_txt = "ok" if result.get("ok") else "warn"
-    ms = result.get("ms")
-    log_activity("link", f"تست پینگ: {result.get('detail','')} " + (f"({ms}ms)" if ms else ""), status_txt)
-    return result
 
 @app.post("/api/node/links")
 async def node_create_link(request: Request, key_id: str = Depends(require_node_key)):
@@ -2753,7 +2435,7 @@ from protocol.vless.vless import (
     check_and_use,
     relay_ws_to_tcp,
     relay_tcp_to_ws,
-    )
+)
 from protocol.vless.websocket import websocket_tunnel
 
 from protocol.trojan.websocket import trojan_ws_tunnel
@@ -2937,7 +2619,7 @@ from updater import (
     get_latest_version_info, perform_update,
     update_log, update_state, load_update_history,
     REPO, BRANCH, is_newer_version, UPDATES_DISABLED,
-    )
+)
 
 @app.get("/api/version")
 async def api_version(_=Depends(require_auth)):

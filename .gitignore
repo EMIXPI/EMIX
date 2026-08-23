@@ -216,7 +216,3 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
-
-# EMIX runtime binaries & certs (downloaded at runtime, never commit)
-sing-box/
-xray-core/
