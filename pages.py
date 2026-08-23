@@ -1715,6 +1715,28 @@ html,body{max-width:100%;overflow-x:hidden}
               <div class="cm-opt-icon"><i class="ti ti-rocket"></i></div>
               <div class="cm-opt-text"><div class="cm-opt-title">XHTTP · stream-up</div><div class="cm-opt-desc">تاخیر پایین‌تر برای اتصال‌های پرسرعت</div></div>
             </div>
+            <div class="cm-opt" data-t="reality" onclick="cmSelectTransport('reality',this)">
+              <div class="cm-opt-radio"></div>
+              <div class="cm-opt-icon"><i class="ti ti-eye-bolt"></i></div>
+              <div class="cm-opt-text"><div class="cm-opt-title">REALITY · Vision</div><div class="cm-opt-desc">شبیه‌سازی TLS واقعی — امن‌ترین روش</div></div>
+            </div>
+            <div class="cm-opt" data-t="grpc" onclick="cmSelectTransport('grpc',this)">
+              <div class="cm-opt-radio"></div>
+              <div class="cm-opt-icon"><i class="ti ti-network"></i></div>
+              <div class="cm-opt-text"><div class="cm-opt-title">gRPC</div><div class="cm-opt-desc">پرفورمنس بالا با multiplexing داخلی</div></div>
+            </div>
+            <div class="cm-opt" data-t="hysteria2" onclick="cmSelectTransport('hysteria2',this)">
+              <div class="cm-opt-radio"></div>
+              <div class="cm-opt-icon"><i class="ti ti-bolt"></i></div>
+              <div class="cm-opt-text"><div class="cm-opt-title">Hysteria2 (QUIC)</div><div class="cm-opt-desc">پروتکل فوق‌سریع QUIC — نیاز به sing-box</div></div>
+              <span class="cm-opt-tag" style="background:rgba(244,114,182,.15);color:#f9a8d4">جدید</span>
+            </div>
+            <div class="cm-opt" data-t="tuic" onclick="cmSelectTransport('tuic',this)">
+              <div class="cm-opt-radio"></div>
+              <div class="cm-opt-icon"><i class="ti ti-rocket"></i></div>
+              <div class="cm-opt-text"><div class="cm-opt-title">TUIC v5 (QUIC)</div><div class="cm-opt-desc">سبک و کم‌مصرف — نیاز به sing-box</div></div>
+              <span class="cm-opt-tag" style="background:rgba(251,191,36,.15);color:#fde68a">جدید</span>
+            </div>
           </div></div></div>
         </div>
       
@@ -3497,9 +3519,13 @@ const BASE_INFO = {
   telproxy: { icon:'ti-brand-telegram', title:'Telegram Proxy', desc:'پروکسی MTProto مستقیم روی یک پورت TCP اختصاصی' },
 };
 const TRANSPORT_INFO = {
-  'ws':               { icon:'ti-link',    title:'WebSocket',            desc:'پایدار و سازگار با همه شرایط شبکه' },
-  'xhttp-packet-up':  { icon:'ti-package', title:'XHTTP · packet-up',    desc:'سازگاری بالا با CDN و پروکسی‌ها' },
-  'xhttp-stream-up':  { icon:'ti-rocket',  title:'XHTTP · stream-up',    desc:'تاخیر پایین‌تر برای اتصال‌های پرسرعت' }
+  'ws':               { icon:'ti-link',      title:'WebSocket',            desc:'پایدار و سازگار با همه شرایط شبکه' },
+  'xhttp-packet-up':  { icon:'ti-package',   title:'XHTTP · packet-up',    desc:'سازگاری بالا با CDN و پروکسی‌ها' },
+  'xhttp-stream-up':  { icon:'ti-rocket',    title:'XHTTP · stream-up',    desc:'تاخیر پایین‌تر برای اتصال‌های پرسرعت' },
+  'reality':          { icon:'ti-eye-bolt',  title:'REALITY · Vision',     desc:'شبیه‌سازی TLS واقعی — امن‌ترین روش' },
+  'grpc':             { icon:'ti-network',   title:'gRPC',                 desc:'پرفورمنس بالا با multiplexing داخلی' },
+  'hysteria2':        { icon:'ti-bolt',      title:'Hysteria2 (QUIC)',     desc:'پروتکل فوق‌سریع QUIC — نیاز به sing-box' },
+  'tuic':             { icon:'ti-rocket',    title:'TUIC v5 (QUIC)',       desc:'سبک و کم‌مصرف — نیاز به sing-box' }
 };
 
 function cmSelectBase(val, el){
@@ -3584,6 +3610,25 @@ function cmApplyProto(){
   if (cmBase === 'shadowsocks') {
     const val = cmTransport === 'ws' ? 'shadowsocks' : `shadowsocks-${cmTransport}`;
     document.getElementById('nl-proto').value = val;
+    return;
+  }
+  // پروتکل‌های مستقل (وابسته به VLESS/Trojan نیستند)
+  if (cmTransport === 'hysteria2') {
+    document.getElementById('nl-proto').value = 'hysteria2';
+    return;
+  }
+  if (cmTransport === 'tuic') {
+    document.getElementById('nl-proto').value = 'tuic';
+    return;
+  }
+  // REALITY فقط با VLESS معنی داره
+  if (cmTransport === 'reality') {
+    document.getElementById('nl-proto').value = 'vless-reality';
+    return;
+  }
+  // gRPC هم برای VLESS و هم Trojan
+  if (cmTransport === 'grpc') {
+    document.getElementById('nl-proto').value = cmBase === 'trojan' ? 'trojan-grpc' : 'vless-grpc';
     return;
   }
   const val = cmTransport === 'ws'
