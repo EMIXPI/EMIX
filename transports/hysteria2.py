@@ -112,10 +112,14 @@ class Hysteria2Transport(AbstractTransport):
         port = params.get("port", 443)
         obfs_pw = params.get("obfs_password", password)
 
-        # فرمت: hysteria2://password@host:port?sni=...&obfs=salamander&obfs-password=...
+        # فرمت: hysteria2://password@host:port?sni=...&insecure=1
         link = f"hysteria2://{quote(password)}@{host}:{port}?"
-        link += f"sni={quote(sni)}&insecure=0&alpn=h3"
-        link += f"&obfs=salamander&obfs-password={quote(obfs_pw)}"
+        link += f"sni={quote(sni)}&alpn=h3"
+        # پل EMIX با گواهی self-signed سرو می‌کند؛ پیش‌فرض insecure=1 است.
+        link += f"&insecure={params.get('insecure', '1')}"
+        obfs_pw = params.get("obfs_password")
+        if obfs_pw:
+            link += f"&obfs=salamander&obfs-password={quote(obfs_pw)}"
         link += f"#{quote(remark)}"
         return link
 

@@ -86,7 +86,9 @@ class TUICTransport(AbstractTransport):
 
         link = f"tuic://{quote(uuid)}:{quote(password)}@{host}:{port}?"
         link += f"sni={quote(sni)}&alpn=h3&congestion_control={congestion}"
-        link += f"&udp_relay_mode=native&allow_insecure=0"
+        # پل EMIX با گواهی self-signed سرو می‌کند؛ کلاینت‌ها allow_insecure=1 لازم دارند
+        insecure = str(params.get("insecure", "1"))
+        link += f"&udp_relay_mode=native&allow_insecure={insecure}"
         link += f"#{quote(remark)}"
         return link
 
