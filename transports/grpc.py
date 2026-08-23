@@ -43,7 +43,7 @@ class GrpcTransport(AbstractTransport):
     def share_params(self, uuid: str, host: str, params: Dict[str, Any]) -> Dict[str, str]:
         return {
             "encryption": "none",
-            "security": "tls",
+            "security": params.get("security", "tls"),
             "type": "grpc",
             "serviceName": params.get("service_name", "GunService"),
             "host": host,

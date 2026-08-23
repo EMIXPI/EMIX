@@ -56,7 +56,8 @@ import transports  # noqa: F401 — auto-registers all transports
 from transports import (
     TRANSPORT_REGISTRY, get_transport, list_transports,
     get_random_sni, generate_x25519_keypair,
-)
+    )
+import xraybridge
 from fastapi import FastAPI, Request, HTTPException, WebSocket, WebSocketDisconnect, Depends
 from fastapi.responses import Response, HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -85,7 +86,7 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
-)
+    )
 
 # ── Persistence ───────────────────────────────────────────────────────────────
 DATA_DIR = Path(os.environ.get("DATA_DIR", "/data"))
@@ -267,7 +268,7 @@ PROTOCOLS = (
     "hysteria2", "tuic",
     # MTProto / Shadowsocks (موجود)
     "mtproto", "shadowsocks",
-)
+    )
 DEFAULT_PROTOCOL = "vless-ws"
 
 # ── تنظیمات عمومی ترنسپورت ───────────────────────────────────────────────────
@@ -337,6 +338,15 @@ async def startup():
     )
     await load_state()
     await _restart_mtproto_instances()
+    # ── Xray bridge: اگر لینک REALITY/gRPC وجود دارد، خودکار بالا بیا ──
+    try:
+        async with LINKS_LOCK:
+            _xray_links = [dict(d) for d in LINKS.values()]
+        if any(l.get("protocol") in ("vless-reality", "vless-reality-grpc", "vless-grpc") for l in _xray_links):
+            asyncio.create_task(xraybridge.sync_and_start(_xray_links))
+            log_activity("system", "Xray bridge در حال راه‌اندازی برای پروتکل‌های جدید", "info")
+    except Exception as exc:
+        logger.warning(f"Xray bridge autostart skipped: {exc}")
     log_activity("system", "سرور راه‌اندازی شد", "ok")
     logger.info(f"EMIX v9.2 started on port {CONFIG['port']}")
 
@@ -559,20 +569,23 @@ def generate_share_link(uuid: str, host: str, remark: str = "EMIX", protocol: st
             "uuid": uuid, "host": host,
             "fp": fp, "fingerprint": fp, "alpn": alpn,
         }
-        # REALITY-specific params
+        # REALITY-specific params — پایدار برای هر لینک (یک‌بار تولید، همیشه ثابت)
         if "reality" in protocol:
-            link_params = link.get("reality_params", {})
-            if link_params:
-                params.update(link_params)
-            else:
-                params["server_name"] = get_random_sni()
-                params["fingerprint"] = fp
-                keys = link.get("x25519_keys") or generate_x25519_keypair()
-                params["private_key"] = keys[0]
-                params["public_key"] = keys[1]
-        # gRPC params
-        if "grpc" in protocol:
-            params["service_name"] = link.get("grpc_service", "GunService")
+            link_params = _ensure_reality_params(link)
+            params.update(link_params)
+            # پورت واقعی که Xray bridge روی آن گوش می‌دهد
+            params["port"] = xraybridge.REALITY_PORT
+            if "grpc" in protocol:
+                params["type"] = "grpc"
+                params["service_name"] = link.get("grpc_service", "GunService")
+        elif "grpc" in protocol:
+            # gRPC بدون TLS توسط پل داخلی سرو می‌شود (h2c)
+            if not link.get("grpc_service"):
+                link["grpc_service"] = "GunService"
+                asyncio.get_event_loop().create_task(_safe_save_state())
+            params["service_name"] = link["grpc_service"]
+            params["security"] = "none"
+            params["port"] = xraybridge.GRPC_PORT
         # Hysteria2 params
         if protocol == "hysteria2":
             params["password"] = link.get("hy2_password", "")
@@ -630,6 +643,36 @@ def generate_share_link(uuid: str, host: str, remark: str = "EMIX", protocol: st
         }
     query = "&".join(f"{k}={quote(str(v))}" for k, v in params.items())
     return f"vless://{uuid}@{host}:443?{query}#{quote(remark)}"
+
+def _ensure_reality_params(link: dict) -> dict:
+    """پارامترهای REALITY را برای هر لینک یک‌بار تولید و در خود لینک ذخیره می‌کند.
+
+    بدون این، کلید/SNI/shortId در هر بار نمایش لینک تغییر می‌کرد و کلاینت‌ها
+    هرگز نمی‌توانستند وصل بمانند. کلید با الگوریتم x25519 سازگار با Xray
+    تولید می‌شود تا مستقیماً در inbound پل Xray هم استفاده شود.
+    """
+    rp = link.get("reality_params")
+    if isinstance(rp, dict) and rp.get("private_key") and rp.get("public_key") \
+            and rp.get("server_name") and rp.get("short_ids"):
+        return rp
+    priv, pub = xraybridge.generate_keypair()
+    rp = {
+        "server_name": get_random_sni(),
+        "fingerprint": link.get("fingerprint", "chrome"),
+        "private_key": priv,
+        "public_key": pub,
+        "short_ids": [xraybridge.generate_short_id(8)],
+    }
+    link["reality_params"] = rp
+    asyncio.get_event_loop().create_task(_safe_save_state())
+    return rp
+
+async def _safe_save_state():
+    """ذخیره‌ی state به‌صورت ایمن (بدون شکستن جریان اصلی در صورت خطا)."""
+    try:
+        await save_state()
+    except Exception as exc:
+        logger.warning(f"save_state after reality-params init failed: {exc}")
 
 def uptime() -> str:
     secs = int(time.time() - stats["start_time"])
@@ -1702,6 +1745,9 @@ async def _create_link_core(body: dict) -> dict:
                     ids.append(uid)
 
     asyncio.create_task(save_state())
+    # اگر لینک جدید از پروتکل‌های REALITY/gRPC باشد، پل Xray همگام می‌شود
+    if protocol in ("vless-reality", "vless-reality-grpc", "vless-grpc"):
+        asyncio.create_task(_xray_bridge_sync())
     log_activity("link", f"کانفیگ «{label}» ساخته شد", "ok")
     host = get_host()
     return {
@@ -1712,10 +1758,45 @@ async def _create_link_core(body: dict) -> dict:
         "sub_url": f"https://{host}/sub/{uid}",
     }
 
+
+async def _xray_bridge_sync():
+    """بعد از هر تغییر لینک، کانفیگ پل Xray را با لینک‌های فعلی همگام می‌کند."""
+    try:
+        async with LINKS_LOCK:
+            links = [dict(d) for d in LINKS.values()]
+        if any(l.get("protocol") in ("vless-reality", "vless-reality-grpc", "vless-grpc") for l in links):
+            await xraybridge.sync_and_start(links)
+    except Exception as exc:
+        logger.warning(f"xray bridge sync failed: {exc}")
+
 @app.post("/api/links")
 async def create_link(request: Request, _=Depends(require_auth)):
     body = await request.json()
     return await _create_link_core(body)
+
+
+# ── Xray Bridge API (پروتکل‌های REALITY / gRPC) ──────────────────────────────
+@app.get("/api/xray/status")
+async def api_xray_status(_=Depends(require_auth)):
+    return xraybridge.status()
+
+@app.post("/api/xray/start")
+async def api_xray_start(_=Depends(require_auth)):
+    async with LINKS_LOCK:
+        links = [dict(d) for d in LINKS.values()]
+    result = await xraybridge.sync_and_start(links)
+    log_activity("system", "Xray bridge " + ("اجر شد" if result.get("running") else "به‌روزرسانی شد"), "ok" if result.get("ok") else "err")
+    return result
+
+@app.post("/api/xray/stop")
+async def api_xray_stop(_=Depends(require_auth)):
+    await xraybridge.stop()
+    log_activity("system", "Xray bridge متوقف شد", "info")
+    return {"ok": True, "running": False}
+
+@app.post("/api/xray/install")
+async def api_xray_install(_=Depends(require_auth)):
+    return await xraybridge.install()
 
 @app.post("/api/node/links")
 async def node_create_link(request: Request, key_id: str = Depends(require_node_key)):
@@ -2496,7 +2577,7 @@ from protocol.vless.vless import (
     check_and_use,
     relay_ws_to_tcp,
     relay_tcp_to_ws,
-)
+    )
 from protocol.vless.websocket import websocket_tunnel
 
 from protocol.trojan.websocket import trojan_ws_tunnel
@@ -2680,7 +2761,7 @@ from updater import (
     get_latest_version_info, perform_update,
     update_log, update_state, load_update_history,
     REPO, BRANCH, is_newer_version, UPDATES_DISABLED,
-)
+    )
 
 @app.get("/api/version")
 async def api_version(_=Depends(require_auth)):
